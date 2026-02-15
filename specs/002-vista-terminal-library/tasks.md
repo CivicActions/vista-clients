@@ -24,9 +24,9 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 **Purpose**: Project initialization, dependency management, directory structure
 
-- [ ] T001 Create project directory structure: `src/vista_test/terminal/`, `tests/unit/`, `tests/contract/`, `tests/smoke/` with `__init__.py` files (terminal package is new; test dirs already exist — add only missing `__init__.py`)
-- [ ] T002 Update `pyproject.toml` to add `paramiko` as a dependency in `[project.dependencies]`
-- [ ] T003 [P] Verify `pyproject.toml` tool sections for ruff and pyright are configured per constitution standards (already present from 001 — confirm no changes needed)
+- [x] T001 Create project directory structure: `src/vista_test/terminal/`, `tests/unit/`, `tests/contract/`, `tests/smoke/` with `__init__.py` files (terminal package is new; test dirs already exist — add only missing `__init__.py`)
+- [x] T002 Update `pyproject.toml` to add `paramiko` as a dependency in `[project.dependencies]`
+- [x] T003 [P] Verify `pyproject.toml` tool sections for ruff and pyright are configured per constitution standards (already present from 001 — confirm no changes needed)
 
 ---
 
@@ -38,16 +38,16 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 **Covers**: FR-005, FR-019
 
-- [ ] T004 [P] Implement exception hierarchy (`TerminalError`, `ConnectionError`, `AuthenticationError`, `SessionError`, `PromptTimeoutError`, `LoginPromptError`, `StateError`) with custom attributes per contracts/api.md in `src/vista_test/terminal/errors.py`
-- [ ] T005 [P] Implement `SessionState` enum, `PromptCategory` enum, `CredentialSource` enum, and `CommandRecord` frozen dataclass in `src/vista_test/terminal/session.py` (types scaffold only — no `VistATerminal` class yet)
-- [ ] T006 [P] Implement `strip_escape_sequences()` with carriage-return stripping and ANSI/VT100 regex (`\x1b\[[0-9;]*[a-zA-Z?]`) in `src/vista_test/terminal/vt100.py`
-- [ ] T007 [P] Add unit tests for `strip_escape_sequences()`: cursor positioning, colour codes, device attributes, `\r` removal, nested sequences, empty input, plain text passthrough in `tests/unit/test_vt100.py`
-- [ ] T008 [P] Add unit tests verifying all terminal exception types are independently catchable and carry correct attributes (`level`, `partial_output`, `prompt_text`, `current_state`/`required_state`) in `tests/unit/test_errors.py`
-- [ ] T009 Implement `SSHTransport` class (constructor, `connect()` with `paramiko.SSHClient`, `AutoAddPolicy`, interactive shell via `invoke_shell(term='vt100')`, `channel` property, `close()`, `is_connected` property) in `src/vista_test/terminal/transport.py`
-- [ ] T010 [P] Add unit tests for `SSHTransport` with mock `paramiko.SSHClient`: connect, auth failure, channel close, `is_connected` state in `tests/unit/test_transport.py`
-- [ ] T011 Implement `ExpectChannel` class (`__init__` with incremental UTF-8 decoder via `codecs.getincrementaldecoder`, `expect()` with settle delay and `recv_ready()` polling loop, `send()`, `sendline()`, `buffer` property, output cleaning pipeline: `\r` strip → ANSI strip → result) in `src/vista_test/terminal/expect.py`
-- [ ] T012 [P] Add unit tests for `ExpectChannel` with mock channel: pattern matching, settle delay behaviour, timeout raising `PromptTimeoutError` with partial output, multi-byte UTF-8 split across `recv()` calls, `send_ready()` guard in `tests/unit/test_expect.py`
-- [ ] T013 Define default prompt patterns as compiled regexes grouped by `PromptCategory` (11 patterns from data-model.md: `select_option`, `select_name`, `device`, `default_value`, `access_code`, `verify_code`, `terminal_type`, `press_return`, `caret_stop`, `end_of_report`, `type_enter`) in `src/vista_test/terminal/session.py`
+- [x] T004 [P] Implement exception hierarchy (`TerminalError`, `ConnectionError`, `AuthenticationError`, `SessionError`, `PromptTimeoutError`, `LoginPromptError`, `StateError`) with custom attributes per contracts/api.md in `src/vista_test/terminal/errors.py`
+- [x] T005 [P] Implement `SessionState` enum, `PromptCategory` enum, `CredentialSource` enum, and `CommandRecord` frozen dataclass in `src/vista_test/terminal/session.py` (types scaffold only — no `VistATerminal` class yet)
+- [x] T006 [P] Implement `strip_escape_sequences()` with carriage-return stripping and ANSI/VT100 regex (`\x1b\[[0-9;]*[a-zA-Z?]`) in `src/vista_test/terminal/vt100.py`
+- [x] T007 [P] Add unit tests for `strip_escape_sequences()`: cursor positioning, colour codes, device attributes, `\r` removal, nested sequences, empty input, plain text passthrough in `tests/unit/test_vt100.py`
+- [x] T008 [P] Add unit tests verifying all terminal exception types are independently catchable and carry correct attributes (`level`, `partial_output`, `prompt_text`, `current_state`/`required_state`) in `tests/unit/test_errors.py`
+- [x] T009 Implement `SSHTransport` class (constructor, `connect()` with `paramiko.SSHClient`, `AutoAddPolicy`, interactive shell via `invoke_shell(term='vt100')`, `channel` property, `close()`, `is_connected` property) in `src/vista_test/terminal/transport.py`
+- [x] T010 [P] Add unit tests for `SSHTransport` with mock `paramiko.SSHClient`: connect, auth failure, channel close, `is_connected` state in `tests/unit/test_transport.py`
+- [x] T011 Implement `ExpectChannel` class (`__init__` with incremental UTF-8 decoder via `codecs.getincrementaldecoder`, `expect()` with settle delay and `recv_ready()` polling loop, `send()`, `sendline()`, `buffer` property, output cleaning pipeline: `\r` strip → ANSI strip → result) in `src/vista_test/terminal/expect.py`
+- [x] T012 [P] Add unit tests for `ExpectChannel` with mock channel: pattern matching, settle delay behaviour, timeout raising `PromptTimeoutError` with partial output, multi-byte UTF-8 split across `recv()` calls, `send_ready()` guard in `tests/unit/test_expect.py`
+- [x] T013 Define default prompt patterns as compiled regexes grouped by `PromptCategory` (11 patterns from data-model.md: `select_option`, `select_name`, `device`, `default_value`, `access_code`, `verify_code`, `terminal_type`, `press_return`, `caret_stop`, `end_of_report`, `type_enter`) in `src/vista_test/terminal/session.py`
 
 **Checkpoint**: Foundation ready — all shared types, errors, transport, expect engine, VT100 stripping, and prompt patterns are in place
 
@@ -63,15 +63,15 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 ### Implementation for User Story 1
 
-- [ ] T014 [US1] Implement `VistATerminal` constructor with parameter validation (port 1–65535, timeout > 0, prompt_timeout > 0, settle_delay ≥ 0) in `src/vista_test/terminal/session.py`
-- [ ] T015 [US1] Implement SSH credential resolution (explicit args → `VISTA_SSH_USER`/`VISTA_SSH_PASSWORD` env vars → VEHU defaults `vehutied`/`tied`) in `src/vista_test/terminal/session.py`
-- [ ] T016 [US1] Implement `connect()` method: create `SSHTransport`, connect with resolved SSH creds, create `ExpectChannel`, consume banner text, detect `ACCESS CODE:` prompt, transition to `CONNECTED` state, return banner in `src/vista_test/terminal/session.py`
-- [ ] T017 [US1] Implement `disconnect()` (close transport, transition to `DISCONNECTED`, safe to call multiple times) and context manager `__enter__`/`__exit__` in `src/vista_test/terminal/session.py`
-- [ ] T018 [US1] Implement `state` property, `is_connected` property, and state enforcement helper (raise `StateError` for invalid transitions) in `src/vista_test/terminal/session.py`
-- [ ] T019 [P] [US1] Add unit tests for constructor validation (`ValueError` on bad inputs), state machine transitions, SSH credential resolution order, and context manager in `tests/unit/test_session.py`
-- [ ] T020 [US1] Add smoke test: connect to VEHU port 2222, verify `state == CONNECTED`, verify banner contains `VEHU`, disconnect, verify `state == DISCONNECTED` in `tests/smoke/test_terminal_lifecycle.py`
-- [ ] T021 [US1] Add smoke test: context manager auto-close (verify disconnected after `with` block exits) in `tests/smoke/test_terminal_lifecycle.py`
-- [ ] T022 [US1] Add smoke test: connection to unreachable host raises `ConnectionError` in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T014 [US1] Implement `VistATerminal` constructor with parameter validation (port 1–65535, timeout > 0, prompt_timeout > 0, settle_delay ≥ 0) in `src/vista_test/terminal/session.py`
+- [x] T015 [US1] Implement SSH credential resolution (explicit args → `VISTA_SSH_USER`/`VISTA_SSH_PASSWORD` env vars → VEHU defaults `vehutied`/`tied`) in `src/vista_test/terminal/session.py`
+- [x] T016 [US1] Implement `connect()` method: create `SSHTransport`, connect with resolved SSH creds, create `ExpectChannel`, consume banner text, detect `ACCESS CODE:` prompt, transition to `CONNECTED` state, return banner in `src/vista_test/terminal/session.py`
+- [x] T017 [US1] Implement `disconnect()` (close transport, transition to `DISCONNECTED`, safe to call multiple times) and context manager `__enter__`/`__exit__` in `src/vista_test/terminal/session.py`
+- [x] T018 [US1] Implement `state` property, `is_connected` property, and state enforcement helper (raise `StateError` for invalid transitions) in `src/vista_test/terminal/session.py`
+- [x] T019 [P] [US1] Add unit tests for constructor validation (`ValueError` on bad inputs), state machine transitions, SSH credential resolution order, and context manager in `tests/unit/test_session.py`
+- [x] T020 [US1] Add smoke test: connect to VEHU port 2222, verify `state == CONNECTED`, verify banner contains `VEHU`, disconnect, verify `state == DISCONNECTED` in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T021 [US1] Add smoke test: context manager auto-close (verify disconnected after `with` block exits) in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T022 [US1] Add smoke test: connection to unreachable host raises `ConnectionError` in `tests/smoke/test_terminal_lifecycle.py`
 
 **Checkpoint**: User Story 1 complete — can open/close SSH connections to VistA with automatic OS login
 
@@ -87,14 +87,14 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 ### Implementation for User Story 2
 
-- [ ] T023 [US2] Implement `send()` method (raw text to channel, no prompt wait, state check) in `src/vista_test/terminal/session.py`
-- [ ] T024 [US2] Implement `send_and_wait()` method: sendline, wait for prompt via `ExpectChannel.expect()`, apply output cleaning pipeline (echo strip → `\r` strip → VT100 strip), return cleaned output in `src/vista_test/terminal/session.py`
-- [ ] T025 [US2] Implement `wait_for()` method (block until pattern matches, no input sent, return `(match, text_before)` tuple) in `src/vista_test/terminal/session.py`
-- [ ] T026 [P] [US2] Add contract tests: each of the 11 default prompt patterns matches known VEHU output samples (captured from research.md) in `tests/contract/test_prompt_patterns.py`
-- [ ] T027 [US2] Add unit tests for `send_and_wait()` output cleaning: command echo removal, VT100 stripping, `\r` stripping in `tests/unit/test_session.py`
-- [ ] T028 [US2] Add smoke test: connect to VEHU, send a command string, verify cleaned output returned and next prompt detected in `tests/smoke/test_terminal_lifecycle.py`
-- [ ] T029 [US2] Add smoke test: `send_and_wait()` with custom prompt pattern (regex string) in `tests/smoke/test_terminal_lifecycle.py`
-- [ ] T030 [US2] Add smoke test: prompt timeout raises `PromptTimeoutError` with `partial_output` attribute populated in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T023 [US2] Implement `send()` method (raw text to channel, no prompt wait, state check) in `src/vista_test/terminal/session.py`
+- [x] T024 [US2] Implement `send_and_wait()` method: sendline, wait for prompt via `ExpectChannel.expect()`, apply output cleaning pipeline (echo strip → `\r` strip → VT100 strip), return cleaned output in `src/vista_test/terminal/session.py`
+- [x] T025 [US2] Implement `wait_for()` method (block until pattern matches, no input sent, return `(match, text_before)` tuple) in `src/vista_test/terminal/session.py`
+- [x] T026 [P] [US2] Add contract tests: each of the 11 default prompt patterns matches known VEHU output samples (captured from research.md) in `tests/contract/test_prompt_patterns.py`
+- [x] T027 [US2] Add unit tests for `send_and_wait()` output cleaning: command echo removal, VT100 stripping, `\r` stripping in `tests/unit/test_session.py`
+- [x] T028 [US2] Add smoke test: connect to VEHU, send a command string, verify cleaned output returned and next prompt detected in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T029 [US2] Add smoke test: `send_and_wait()` with custom prompt pattern (regex string) in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T030 [US2] Add smoke test: prompt timeout raises `PromptTimeoutError` with `partial_output` attribute populated in `tests/smoke/test_terminal_lifecycle.py`
 
 **Checkpoint**: User Story 2 complete — can send commands and receive prompt-synchronised output
 
@@ -112,12 +112,12 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 ### Implementation for User Story 5
 
-- [ ] T031 [US5] Implement VistA credential resolution (explicit args → `VISTA_ACCESS_CODE`/`VISTA_VERIFY_CODE` env vars → VEHU defaults `PRO1234`/`PRO1234!!`) in `src/vista_test/terminal/session.py`
-- [ ] T032 [US5] Implement `login()` method: enter Access Code at `ACCESS CODE:` prompt, enter Verify Code at `VERIFY CODE:` prompt, accept default terminal type at `Select TERMINAL TYPE NAME:` prompt, detect main menu prompt, transition to `AUTHENTICATED` state, return greeting text in `src/vista_test/terminal/session.py`
-- [ ] T033 [US5] Add `LoginPromptError` handling in `login()`: detect unrecognised intermediate prompts (any prompt that isn't `VERIFY CODE:`, `TERMINAL TYPE NAME:`, or a known menu prompt) and raise with `prompt_text` attribute in `src/vista_test/terminal/session.py`
-- [ ] T034 [P] [US5] Add unit tests for VistA credential resolution order (explicit overrides env, env overrides defaults) in `tests/unit/test_session.py`
-- [ ] T035 [US5] Add smoke test: `connect()` then `login()` with VEHU defaults, verify `state == AUTHENTICATED` and greeting contains `DOCTOR` in `tests/smoke/test_terminal_lifecycle.py`
-- [ ] T036 [US5] Add smoke test: `login()` with invalid credentials raises `AuthenticationError` with `level == "vista"` in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T031 [US5] Implement VistA credential resolution (explicit args → `VISTA_ACCESS_CODE`/`VISTA_VERIFY_CODE` env vars → VEHU defaults `PRO1234`/`PRO1234!!`) in `src/vista_test/terminal/session.py`
+- [x] T032 [US5] Implement `login()` method: enter Access Code at `ACCESS CODE:` prompt, enter Verify Code at `VERIFY CODE:` prompt, accept default terminal type at `Select TERMINAL TYPE NAME:` prompt, detect main menu prompt, transition to `AUTHENTICATED` state, return greeting text in `src/vista_test/terminal/session.py`
+- [x] T033 [US5] Add `LoginPromptError` handling in `login()`: detect unrecognised intermediate prompts (any prompt that isn't `VERIFY CODE:`, `TERMINAL TYPE NAME:`, or a known menu prompt) and raise with `prompt_text` attribute in `src/vista_test/terminal/session.py`
+- [x] T034 [P] [US5] Add unit tests for VistA credential resolution order (explicit overrides env, env overrides defaults) in `tests/unit/test_session.py`
+- [x] T035 [US5] Add smoke test: `connect()` then `login()` with VEHU defaults, verify `state == AUTHENTICATED` and greeting contains `DOCTOR` in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T036 [US5] Add smoke test: `login()` with invalid credentials raises `AuthenticationError` with `level == "vista"` in `tests/smoke/test_terminal_lifecycle.py`
 
 **Checkpoint**: User Story 5 complete — can authenticate with VistA and reach the main menu
 
@@ -133,11 +133,11 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 ### Implementation for User Story 3
 
-- [ ] T037 [US3] Implement `auto_scroll` property (getter/setter, default `False`) and `max_pages` property (getter/setter, default `100`, must be ≥ 1) in `src/vista_test/terminal/session.py`
-- [ ] T038 [US3] Implement pagination detection and auto-advance in `send_and_wait()`: when `auto_scroll` is enabled (session-level or per-call override), detect pagination prompts, send return keystroke, accumulate output, repeat until non-pagination prompt or `max_pages` reached in `src/vista_test/terminal/session.py`
-- [ ] T039 [P] [US3] Add unit tests for pagination pattern matching (all 4 pagination regexes) and `max_pages` limit enforcement in `tests/unit/test_session.py`
-- [ ] T040 [US3] Add smoke test: enable `auto_scroll`, navigate to paginated VistA output, verify complete multi-page text captured in `tests/smoke/test_terminal_lifecycle.py`
-- [ ] T041 [US3] Add smoke test: `auto_scroll` disabled (default), verify pagination prompt treated as normal prompt and partial output returned in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T037 [US3] Implement `auto_scroll` property (getter/setter, default `False`) and `max_pages` property (getter/setter, default `100`, must be ≥ 1) in `src/vista_test/terminal/session.py`
+- [x] T038 [US3] Implement pagination detection and auto-advance in `send_and_wait()`: when `auto_scroll` is enabled (session-level or per-call override), detect pagination prompts, send return keystroke, accumulate output, repeat until non-pagination prompt or `max_pages` reached in `src/vista_test/terminal/session.py`
+- [x] T039 [P] [US3] Add unit tests for pagination pattern matching (all 4 pagination regexes) and `max_pages` limit enforcement in `tests/unit/test_session.py`
+- [x] T040 [US3] Add smoke test: enable `auto_scroll`, navigate to paginated VistA output, verify complete multi-page text captured in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T041 [US3] Add smoke test: `auto_scroll` disabled (default), verify pagination prompt treated as normal prompt and partial output returned in `tests/smoke/test_terminal_lifecycle.py`
 
 **Checkpoint**: User Story 3 complete — auto-scroll captures full paginated reports
 
@@ -153,11 +153,11 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 ### Implementation for User Story 4
 
-- [ ] T042 [US4] Implement `last_output`, `raw_last_output`, and `full_output` properties in `src/vista_test/terminal/session.py`
-- [ ] T043 [US4] Implement `session_history` tracking: append `CommandRecord` after each `send_and_wait()` call, maintain ordered list in `src/vista_test/terminal/session.py`
-- [ ] T044 [US4] Implement `contains()` (substring search on cleaned last output) and `search()` (regex search on cleaned last output) methods in `src/vista_test/terminal/session.py`
-- [ ] T045 [P] [US4] Add unit tests for buffer properties (`last_output`, `raw_last_output`, `full_output`, `session_history`), `contains()`, and `search()` in `tests/unit/test_session.py`
-- [ ] T046 [US4] Add smoke test: execute multiple commands, verify `session_history` length and `CommandRecord` fields, verify `contains()` and `search()` against known output in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T042 [US4] Implement `last_output`, `raw_last_output`, and `full_output` properties in `src/vista_test/terminal/session.py`
+- [x] T043 [US4] Implement `session_history` tracking: append `CommandRecord` after each `send_and_wait()` call, maintain ordered list in `src/vista_test/terminal/session.py`
+- [x] T044 [US4] Implement `contains()` (substring search on cleaned last output) and `search()` (regex search on cleaned last output) methods in `src/vista_test/terminal/session.py`
+- [x] T045 [P] [US4] Add unit tests for buffer properties (`last_output`, `raw_last_output`, `full_output`, `session_history`), `contains()`, and `search()` in `tests/unit/test_session.py`
+- [x] T046 [US4] Add smoke test: execute multiple commands, verify `session_history` length and `CommandRecord` fields, verify `contains()` and `search()` against known output in `tests/smoke/test_terminal_lifecycle.py`
 
 **Checkpoint**: User Story 4 complete — output buffer is inspectable and searchable
 
@@ -167,14 +167,14 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 **Purpose**: Public API surface, documentation, logging, final integration validation
 
-- [ ] T047 [P] Create public re-exports in `src/vista_test/terminal/__init__.py` per contracts/api.md: `VistATerminal`, `CommandRecord`, `SessionState`, `strip_escape_sequences`, and all error types
-- [ ] T048 [P] Add Google-style docstrings to all public classes, methods, and functions in `src/vista_test/terminal/session.py`, `src/vista_test/terminal/vt100.py`, `src/vista_test/terminal/errors.py`
-- [ ] T049 [P] Add Python logging throughout: create loggers in `session.py`, `transport.py`, `expect.py`; add DEBUG-level calls for raw terminal I/O in `expect.py` read loop; add INFO-level calls for lifecycle events (connect, login, disconnect) in `session.py`; add credential redaction replacing SSH password, Access Code, and Verify Code values with `***REDACTED***` at all log levels (FR-024) in `src/vista_test/terminal/session.py`, `src/vista_test/terminal/transport.py`, `src/vista_test/terminal/expect.py`
-- [ ] T050 Add full lifecycle smoke test: connect → login → send command → auto-scroll paginated output → search buffer → disconnect (single test validating SC-002) in `tests/smoke/test_terminal_lifecycle.py`
-- [ ] T051 Validate quickstart.md code examples execute against VEHU (SC-001: under 15 lines of code for basic usage) in `tests/smoke/test_quickstart.py`
-- [ ] T052 [P] Run linting (`ruff check`), formatting (`ruff format`), and type checking (`pyright` basic mode) — fix all violations
-- [ ] T053 [P] Verify pure-Python constraint: audit all imports in `src/vista_test/terminal/`, confirm no platform-specific or compiled extensions beyond `paramiko` and no automatic retry logic (FR-025, FR-026, FR-027)
-- [ ] T054 [P] Verify library runs in minimal Alpine container: update `Dockerfile.test` to include `paramiko`, run `tests/unit/` inside container (SC-008)
+- [x] T047 [P] Create public re-exports in `src/vista_test/terminal/__init__.py` per contracts/api.md: `VistATerminal`, `CommandRecord`, `SessionState`, `strip_escape_sequences`, and all error types
+- [x] T048 [P] Add Google-style docstrings to all public classes, methods, and functions in `src/vista_test/terminal/session.py`, `src/vista_test/terminal/vt100.py`, `src/vista_test/terminal/errors.py`
+- [x] T049 [P] Add Python logging throughout: create loggers in `session.py`, `transport.py`, `expect.py`; add DEBUG-level calls for raw terminal I/O in `expect.py` read loop; add INFO-level calls for lifecycle events (connect, login, disconnect) in `session.py`; add credential redaction replacing SSH password, Access Code, and Verify Code values with `***REDACTED***` at all log levels (FR-024) in `src/vista_test/terminal/session.py`, `src/vista_test/terminal/transport.py`, `src/vista_test/terminal/expect.py`
+- [x] T050 Add full lifecycle smoke test: connect → login → send command → auto-scroll paginated output → search buffer → disconnect (single test validating SC-002) in `tests/smoke/test_terminal_lifecycle.py`
+- [x] T051 Validate quickstart.md code examples execute against VEHU (SC-001: under 15 lines of code for basic usage) in `tests/smoke/test_quickstart.py`
+- [x] T052 [P] Run linting (`ruff check`), formatting (`ruff format`), and type checking (`pyright` basic mode) — fix all violations
+- [x] T053 [P] Verify pure-Python constraint: audit all imports in `src/vista_test/terminal/`, confirm no platform-specific or compiled extensions beyond `paramiko` and no automatic retry logic (FR-025, FR-026, FR-027)
+- [x] T054 [P] Verify library runs in minimal Alpine container: update `Dockerfile.test` to include `paramiko`, run `tests/unit/` inside container (SC-008)
 
 ---
 

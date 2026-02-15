@@ -65,3 +65,32 @@ class TestQuickstart:
             # Should still be able to call RPC after ping
             response = broker.call_rpc("ORWU USERINFO")
             assert response.raw
+
+
+class TestTerminalQuickstart:
+    """Terminal quickstart.md examples should work against live VEHU."""
+
+    def test_basic_terminal_usage_under_15_lines(self) -> None:
+        """SC-001: Basic terminal usage in under 15 lines."""
+        from vista_test.terminal import VistATerminal
+
+        with VistATerminal("localhost", 2222) as term:
+            term.login()
+            output = term.send_and_wait("")
+            assert isinstance(output, str)
+
+    def test_explicit_connection_steps(self) -> None:
+        """Quickstart example: explicit connect/login/disconnect."""
+        from vista_test.terminal import VistATerminal
+
+        term = VistATerminal("localhost", 2222)
+        banner = term.connect()
+        assert len(banner) > 0
+
+        greeting = term.login()
+        assert len(greeting) > 0
+
+        output = term.send_and_wait("")
+        assert isinstance(output, str)
+
+        term.disconnect()
