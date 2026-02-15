@@ -328,7 +328,7 @@ representative of VistA's pagination approach:
 ### Default Pagination Regex
 ```python
 PAGINATION_PATTERNS = [
-    re.compile(r'[Pp]ress\s+(<)?RETURN(>)?\s+to\s+continue', re.IGNORECASE),
+    re.compile(r'[Pp]ress\s+<?RETURN>?\s+to\s+continue', re.IGNORECASE),
     re.compile(r"'\^'\s+TO\s+STOP", re.IGNORECASE),
     re.compile(r'END OF REPORT', re.IGNORECASE),
     re.compile(r'[Tt]ype\s+<Enter>\s+to\s+continue', re.IGNORECASE),

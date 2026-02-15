@@ -23,7 +23,7 @@ established, authenticated terminal session.
 
 **Independent Test**: Can be fully tested by opening an SSH
 connection to the VEHU container on port 2222, authenticating
-at the OS level with the known credentials (vista/vista),
+at the OS level with the known credentials (vehutied/tied),
 verifying that the VistA environment loads and presents an
 initial prompt, and then disconnecting cleanly. Delivers value
 as proof that the transport layer and OS-level authentication

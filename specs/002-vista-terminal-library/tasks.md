@@ -36,6 +36,8 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
+**Covers**: FR-005, FR-019
+
 - [ ] T004 [P] Implement exception hierarchy (`TerminalError`, `ConnectionError`, `AuthenticationError`, `SessionError`, `PromptTimeoutError`, `LoginPromptError`, `StateError`) with custom attributes per contracts/api.md in `src/vista_test/terminal/errors.py`
 - [ ] T005 [P] Implement `SessionState` enum, `PromptCategory` enum, `CredentialSource` enum, and `CommandRecord` frozen dataclass in `src/vista_test/terminal/session.py` (types scaffold only — no `VistATerminal` class yet)
 - [ ] T006 [P] Implement `strip_escape_sequences()` with carriage-return stripping and ANSI/VT100 regex (`\x1b\[[0-9;]*[a-zA-Z?]`) in `src/vista_test/terminal/vt100.py`
@@ -81,7 +83,7 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 **Independent Test**: Connect to VEHU, detect initial prompt, send a command, verify output returned between command echo and next prompt.
 
-**Covers**: FR-006, FR-007, FR-008, FR-015, FR-022, FR-029
+**Covers**: FR-006, FR-007, FR-008, FR-015, FR-022, FR-024, FR-029
 
 ### Implementation for User Story 2
 
@@ -106,7 +108,7 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 **Note**: Reordered before US3/US4 because authentication is prerequisite for accessing VistA menus in smoke tests.
 
-**Covers**: FR-017, FR-018, FR-019, FR-030
+**Covers**: FR-017, FR-018, FR-030
 
 ### Implementation for User Story 5
 
@@ -167,11 +169,11 @@ User Story 5 (VistA Login) is reordered before US3/US4 because authentication is
 
 - [ ] T047 [P] Create public re-exports in `src/vista_test/terminal/__init__.py` per contracts/api.md: `VistATerminal`, `CommandRecord`, `SessionState`, `strip_escape_sequences`, and all error types
 - [ ] T048 [P] Add Google-style docstrings to all public classes, methods, and functions in `src/vista_test/terminal/session.py`, `src/vista_test/terminal/vt100.py`, `src/vista_test/terminal/errors.py`
-- [ ] T049 [P] Add credential redaction to all logging statements: replace SSH password, Access Code, and Verify Code values with `***REDACTED***` at all log levels (FR-024) in `src/vista_test/terminal/session.py`
+- [ ] T049 [P] Add Python logging throughout: create loggers in `session.py`, `transport.py`, `expect.py`; add DEBUG-level calls for raw terminal I/O in `expect.py` read loop; add INFO-level calls for lifecycle events (connect, login, disconnect) in `session.py`; add credential redaction replacing SSH password, Access Code, and Verify Code values with `***REDACTED***` at all log levels (FR-024) in `src/vista_test/terminal/session.py`, `src/vista_test/terminal/transport.py`, `src/vista_test/terminal/expect.py`
 - [ ] T050 Add full lifecycle smoke test: connect → login → send command → auto-scroll paginated output → search buffer → disconnect (single test validating SC-002) in `tests/smoke/test_terminal_lifecycle.py`
 - [ ] T051 Validate quickstart.md code examples execute against VEHU (SC-001: under 15 lines of code for basic usage) in `tests/smoke/test_quickstart.py`
 - [ ] T052 [P] Run linting (`ruff check`), formatting (`ruff format`), and type checking (`pyright` basic mode) — fix all violations
-- [ ] T053 [P] Verify pure-Python constraint: audit all imports in `src/vista_test/terminal/`, confirm no platform-specific or compiled extensions beyond `paramiko` (FR-026, FR-027)
+- [ ] T053 [P] Verify pure-Python constraint: audit all imports in `src/vista_test/terminal/`, confirm no platform-specific or compiled extensions beyond `paramiko` and no automatic retry logic (FR-025, FR-026, FR-027)
 - [ ] T054 [P] Verify library runs in minimal Alpine container: update `Dockerfile.test` to include `paramiko`, run `tests/unit/` inside container (SC-008)
 
 ---

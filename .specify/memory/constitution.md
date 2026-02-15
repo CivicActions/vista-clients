@@ -119,7 +119,7 @@ that govern all project work.
 | **Package/Environment** | UV | Universal and fast package management. |
 | **Reference Image** | `worldvista/vehu` (Docker Hub) | Consistent YottaDB/MUMPS testing surface. |
 | **RPC Protocol** | Native Socket Implementation | Bypasses `TRPCBroker.dll` for Linux compatibility. |
-| **Terminal Protocol** | `pexpect` (over `telnetlib`) | Handles pty interactions for VistA menu systems. |
+| **Terminal Protocol** | `paramiko` with custom expect layer | Pure-Python SSH2 implementation; replaces `pexpect` for cross-platform SSH terminal access (see Principle I). |
 | **Testing Framework** | `pytest` | Industry standard; supports fixtures for VistA setup/teardown. |
 | **Docstrings** | Google Style | Readability and auto-documentation capability. |
 | **Linting/Formatting** | `ruff` | Unified linter and formatter replacing black, isort, pylint. |

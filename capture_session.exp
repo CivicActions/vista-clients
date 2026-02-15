@@ -1,0 +1,115 @@
+#!/usr/bin/expect -f
+# Capture the FULL VistA SSH login sequence
+
+log_file -noappend /Users/owen.barton/workspace/vista-test/session_log.txt
+log_user 1
+set timeout 30
+
+puts "=== SESSION START ==="
+
+spawn ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 2222 vehutied@localhost
+
+expect {
+    "assword:" {
+        puts "\n>>> SSH PASSWORD PROMPT <<<"
+        send "tied\r"
+    }
+    timeout {
+        puts "TIMEOUT at SSH password"
+        exit 1
+    }
+}
+
+# Wait for ACCESS CODE
+set timeout 30
+expect {
+    "ACCESS CODE:" {
+        puts "\n>>> ACCESS CODE PROMPT <<<"
+        send "facprov1\r"
+    }
+    timeout {
+        puts "TIMEOUT waiting for ACCESS CODE"
+        exit 1
+    }
+}
+
+# Wait for VERIFY CODE
+set timeout 15
+expect {
+    "VERIFY CODE:" {
+        puts "\n>>> VERIFY CODE PROMPT <<<"
+        send "1Prov!@#\$\r"
+    }
+    timeout {
+        puts "TIMEOUT waiting for VERIFY CODE"
+        exit 1
+    }
+}
+
+# Capture post-login output - wait for any prompt
+set timeout 30
+expect {
+    -re "Select .+:" {
+        puts "\n>>> FIRST MENU/PROMPT: $expect_out(0,string) <<<"
+    }
+    "DEVICE:" {
+        puts "\n>>> DEVICE PROMPT <<<"
+        send "\r"
+        expect {
+            -re "Select .+:" {
+                puts "\n>>> MENU AFTER DEVICE: $expect_out(0,string) <<<"
+            }
+            timeout { puts "TIMEOUT after DEVICE" }
+        }
+    }
+    timeout {
+        puts "TIMEOUT waiting for post-login prompt"
+    }
+}
+
+# Press enter to see next prompt
+send "\r"
+set timeout 15
+expect {
+    -re "Select .+:" {
+        puts "\n>>> PROMPT AFTER ENTER 1: $expect_out(0,string) <<<"
+    }
+    timeout { puts "TIMEOUT" }
+}
+
+send "\r"
+set timeout 15
+expect {
+    -re "Select .+:" {
+        puts "\n>>> PROMPT AFTER ENTER 2: $expect_out(0,string) <<<"
+    }
+    timeout { puts "TIMEOUT" }
+}
+
+send "\r"
+set timeout 15
+expect {
+    -re "Select .+:" {
+        puts "\n>>> PROMPT AFTER ENTER 3: $expect_out(0,string) <<<"
+    }
+    timeout { puts "TIMEOUT" }
+}
+
+send "\r"
+set timeout 15
+expect {
+    -re "Select .+:" {
+        puts "\n>>> PROMPT AFTER ENTER 4: $expect_out(0,string) <<<"
+    }
+    timeout { puts "TIMEOUT" }
+}
+
+# HALT
+send "halt\r"
+set timeout 10
+expect {
+    eof { puts "\n>>> SESSION EOF <<<" }
+    timeout { puts "TIMEOUT at halt" }
+}
+
+puts "\n=== SESSION END ==="

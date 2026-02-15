@@ -32,8 +32,8 @@ DISCONNECTED → CONNECTED → AUTHENTICATED
 | State | Meaning | Allowed Operations |
 |-------|---------|--------------------|
 | DISCONNECTED | No SSH connection | `connect()` |
-| CONNECTED | SSH established, OS login done, VistA loaded, at VistA prompt | `login()`, `send()`, `expect()`, `disconnect()` |
-| AUTHENTICATED | VistA Access/Verify codes accepted, at main menu | `send()`, `expect()`, `send_and_wait()`, `disconnect()` |
+| CONNECTED | SSH established, OS login done, VistA loaded, at VistA prompt | `login()`, `send()`, `send_and_wait()`, `wait_for()`, `disconnect()` |
+| AUTHENTICATED | VistA Access/Verify codes accepted, at main menu | `send()`, `send_and_wait()`, `wait_for()`, `disconnect()` |
 
 **Invariants**:
 - `port` must be 1–65535
@@ -61,13 +61,15 @@ ready for input.
 | Name | Category | Pattern |
 |------|----------|---------|
 | `select_option` | NAVIGATION | `Select .+ Option:` |
-| `select_name` | NAVIGATION | `Select .+:` |
+| `select_name` | NAVIGATION | `Select .+:\s*$` |
 | `device` | NAVIGATION | `DEVICE:` |
 | `default_value` | NAVIGATION | `//\s*$` |
 | `access_code` | LOGIN | `ACCESS CODE:` |
 | `verify_code` | LOGIN | `VERIFY CODE:` |
 | `terminal_type` | LOGIN | `Select TERMINAL TYPE NAME:` |
 | `press_return` | PAGINATION | `[Pp]ress\s+<?RETURN>?\s+to\s+continue` |
+
+**Pattern Matching Order**: Patterns MUST be evaluated from most-specific to least-specific within each category. In particular, `select_option` (`Select .+ Option:`) and `terminal_type` (`Select TERMINAL TYPE NAME:`) MUST be checked before `select_name` (`Select .+:\s*$`) to avoid false matches. The `login()` method uses only LOGIN-category patterns and known login-flow prompts rather than the full default set.
 | `caret_stop` | PAGINATION | `'\^'\s+TO\s+STOP` |
 | `end_of_report` | PAGINATION | `END OF REPORT` |
 | `type_enter` | PAGINATION | `[Tt]ype\s+<Enter>\s+to\s+continue` |
@@ -184,6 +186,8 @@ TerminalSession 1──* PromptPattern (default + custom)
 TerminalSession 1──1 Credentials (for authentication)
 OutputBuffer    1──* CommandRecord (over lifetime)
 ```
+
+**Implementation Note**: The `TerminalSession` entity is implemented as the `VistATerminal` class in `vista_test.terminal.session`.
 
 ---
 

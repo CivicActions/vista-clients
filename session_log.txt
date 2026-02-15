@@ -1,0 +1,48 @@
+spawn ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 2222 vehutied@localhost
+Warning: Permanently added '[localhost]:2222' (ED25519) to the list of known hosts.
+vehutied@localhost's password: 
+     VEHU or CPRS DEMO INSTANCE - Patched to December 2025 by Sam Habiel
+ 
+     NAME                     ACCESS    VERIFY    E SIG
+     ----                     ------    ------    -----
+     PROGRAMMER,ONE           PRO1234   PRO1234!! 123456
+     PROVIDER,VERO            CAS123    CAS123..  123456
+     PROVIDER,FORTY           PROV40    PROV40!!  123456
+     VEHU,TEN                 10VEHU    QXYG~011  123456
+     PHARMACIST,EIGHT         PHA1234   PHA1234!! 123456
+     LABTECH,ELEVEN           LABT11    LABT11!!  123456
+     LABTECH,FIFTEEN          LABT15    LABT15!!  123456
+     LABTECH,EIGHT            LAB1234   LAB1234!! 123456
+     TDNURSE,ONE              1TDNURSE  BDNURSE1! 123456
+     LABTECH,FIFTY            LABT50    LABT50!!  123456
+     LABTECH,FIFTYEIGHT       LABT58    LABT58!!  123456
+     PROVIDER,FIVE HUNDRED    PRO500    PRO500!!  123456
+     PCMM,FOUR                PR12345   PR12345!! 123456
+     PROVIDER,EHMP            EHMP123   PREH123!! 123456
+     USER,PANORAMA            PU1234    PU1234!!  123456
+     XIU,MARGARET             MX1234    MX1234!!  123456
+     KHAN,VIHAAN              VK1234    VK1234!!  123456
+     KEELEY,TRACY             TK1234    TK1234!!  123456
+     DAY,MICHAEL              MD1234    MD1234!!  123456
+     ZZZ,ZZZ                  ZZZ001    001XXX!!  123456
+ 
+ 
+        ********************************************
+     >>>> CPRS and Vitals are installed in this account <<<<<
+       >> CPRS GUI Client is 1.33.112.1  Patch OR*3.0*629 <<
+      >> Vitals DLL is at Version 5.0.43  Patch GMRV*5.0*43 <<
+    >> Vitals Manager is at Version 5.0.44  Patch GMRV*5.0*44 <<
+               >>> M O C H A   2.0 is disabled <<<
+   *********************************************************
+
+
+
+Volume set: ROU:vehu  UCI: VAH  Device: /dev/pts/0
+
+ACCESS CODE: ********
+VERIFY CODE: *********
+Device: /dev/pts/0
+
+Not a valid ACCESS CODE/VERIFY CODE pair.
+
+ACCESS CODE: 

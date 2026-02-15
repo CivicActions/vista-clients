@@ -69,13 +69,16 @@ src/vista_test/terminal/
 
 tests/
 ├── unit/
+│   ├── test_errors.py   # Exception hierarchy catchability and attributes
 │   ├── test_expect.py   # ExpectChannel prompt matching, settle delay, timeout
-│   ├── test_vt100.py    # Escape sequence stripping edge cases
-│   └── test_session.py  # State machine transitions, credential resolution
+│   ├── test_session.py  # State machine transitions, credential resolution
+│   ├── test_transport.py # SSHTransport with mock paramiko.SSHClient
+│   └── test_vt100.py    # Escape sequence stripping edge cases
 ├── contract/
 │   └── test_prompt_patterns.py  # Known-good prompt regex matching against VEHU output
 └── smoke/
-    └── test_terminal_lifecycle.py  # Full connect→login→command→disconnect against VEHU
+    ├── test_terminal_lifecycle.py  # Full connect→login→command→disconnect against VEHU
+    └── test_quickstart.py          # Quickstart code examples against VEHU
 ```
 
 **Structure Decision**: Single-project layout matching the existing `src/vista_test/rpc/` pattern. The `src/vista_test/terminal/` package contains the library. Tests are in a parallel `tests/` tree with three tiers: unit (no server), contract (no server, pattern verification), and smoke (requires VEHU Docker on port 2222).
@@ -98,5 +101,4 @@ No special xdist fixtures or `worker_id`-based isolation are required for the li
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| (none) | — | — |
