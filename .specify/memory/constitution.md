@@ -122,15 +122,13 @@ that govern all project work.
 | **Terminal Protocol** | `pexpect` (over `telnetlib`) | Handles pty interactions for VistA menu systems. |
 | **Testing Framework** | `pytest` | Industry standard; supports fixtures for VistA setup/teardown. |
 | **Docstrings** | Google Style | Readability and auto-documentation capability. |
-| **Linting** | `black`, `isort`, `pylint` | Enforced code style to prevent variance. |
+| **Linting/Formatting** | `ruff` | Unified linter and formatter replacing black, isort, pylint. |
 | **Typing** | Pyright | Balanced linter with IDE integration. |
 
 ## Development Workflow
 
-- All Python code MUST be formatted with `black` and `isort`
-  before commit.
-- All Python code MUST pass `pylint` checks without disabling
-  rules unless explicitly justified.
+- All Python code MUST be formatted with `ruff format` and pass
+  `ruff check` before commit.
 - All Python code MUST pass `pyright` type checking in basic
   mode at minimum.
 - All public APIs MUST include Google-style docstrings.

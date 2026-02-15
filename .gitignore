@@ -8,3 +8,26 @@ wheels/
 
 # Virtual environments
 .venv
+venv/
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.tmp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env*
+!.env.example
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Logs
+*.log

@@ -5,3 +5,35 @@ description = "VistA functional test framework and tests"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "smoke: tests requiring a live VEHU server",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "SIM", "RUF"]
+ignore = ["E501", "SIM102", "SIM105", "SIM117"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["vista_test"]
+
+[tool.pyright]
+pythonVersion = "3.10"
+typeCheckingMode = "basic"
+include = ["src"]
+exclude = ["tests"]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.0",
+    "pytest-xdist>=3.0",
+    "pyright>=1.1.408",
+    "ruff>=0.15.1",
+]
