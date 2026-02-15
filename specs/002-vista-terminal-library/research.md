@@ -397,3 +397,93 @@ Amend the constitution's Operational Standards table to replace
 - No breaking changes — this is a forward-looking amendment.
 - The `pyproject.toml` dependency list will add `paramiko`
   instead of `pexpect`.
+
+---
+
+## 9. paramiko-expect Prior Art Review
+
+### Source
+[fgimian/paramiko-expect](https://github.com/fgimian/paramiko-expect/blob/master/paramiko_expect.py)
+— unmaintained library providing an expect-style wrapper around
+paramiko. Not suitable as a dependency but reviewed for design
+insights relevant to our custom `ExpectChannel`.
+
+### Patterns to Adopt
+
+1. **Incremental UTF-8 decoding**: Uses
+   `codecs.getincrementaldecoder(encoding)()` to handle
+   multi-byte characters split across `recv()` calls. VistA can
+   emit accented characters in patient names, and paramiko's
+   `channel.recv()` returns raw bytes with no guarantee of
+   character boundary alignment. Our `ExpectChannel` should use
+   an incremental decoder rather than naive `bytes.decode()`.
+
+2. **Carriage return stripping**: Strips `\r` from output
+   before pattern matching (`buffer.replace('\r', '')`).
+   Paramiko pty channels deliver `\r\n` line endings. Our VT100
+   cleaning pipeline should strip `\r` as a first pass before
+   ANSI escape removal.
+
+3. **`send_ready()` guard**: Polls `channel.send_ready()`
+   before calling `channel.send()`. Prevents blocking on a full
+   send buffer. Low cost, worth including as defensive code.
+
+4. **Command echo removal**: Saves the sent command string and
+   strips it from captured output before returning. Our
+   `CommandRecord.output` contract specifies "cleaned output
+   between command echo and prompt" — this confirms we need
+   explicit echo-stripping logic in the output cleaning path.
+
+### Patterns to Deliberately Avoid
+
+1. **No settling delay**: Matches as soon as regex hits the
+   buffer. Our 500ms settle delay (FR-029) is critical for
+   VistA, which sends output in bursts across multiple
+   `recv()` calls. Premature matching on partial output is a
+   known source of flaky test automation against VistA.
+
+2. **`lines_to_check` windowing**: Only matches against the
+   last N lines of output. Fragile for VistA prompts that may
+   appear as inline single-line responses (e.g., `Select:`).
+   Our approach of matching against the full accumulated buffer
+   tail is more robust.
+
+3. **`re.match` with anchored prefix/suffix**: Constructs
+   `.*\n<regex>$` and uses `re.DOTALL`. Forces prompts to be
+   line-anchored, which breaks for VistA inline prompts. Our
+   `re.search` approach is more flexible.
+
+4. **`socket.timeout`-based timeout**: Sets
+   `channel.settimeout(timeout)` which raises `socket.timeout`
+   from `recv()`. Conflates network failure with prompt-wait
+   timeout. Our plan correctly uses a separate time-tracking
+   loop with `recv_ready()` polling to distinguish connection
+   loss from slow VistA output.
+
+5. **Silent `-1` return on timeout**: Returns `-1` instead of
+   raising an exception. Our `PromptTimeoutError` with
+   `partial_output` attribute is far more debuggable.
+
+6. **Incomplete ANSI regex**: Their `strip_ansi_codes` misses
+   VT100 device attribute responses (`\x1b[?1049h`), cursor
+   position requests (`\x1b[6n`), and cursor visibility
+   sequences (`\x1b[?25l`) that VistA emits. Our regex
+   (`\x1b\[[0-9;]*[a-zA-Z?]`) has broader coverage.
+
+### Design Refinements for ExpectChannel
+
+Based on this review, two internal implementation details are
+added to the `ExpectChannel` design:
+
+1. **Incremental decoder**: Use
+   `codecs.getincrementaldecoder('utf-8')()` in the read loop
+   rather than `bytes.decode('utf-8')` on each `recv()` chunk.
+
+2. **Output cleaning pipeline** (applied in order):
+   - Strip `\r` (pty line endings)
+   - Strip VT100/ANSI escape sequences
+   - Strip command echo
+   - Result → `CommandRecord.output`
+
+These are internal to `ExpectChannel` and do not change the
+public API surface or data model.
