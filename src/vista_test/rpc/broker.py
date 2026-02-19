@@ -171,7 +171,7 @@ class VistABroker:
         Credential resolution order:
         1. Explicit arguments (if both provided)
         2. Environment variables VISTA_ACCESS_CODE / VISTA_VERIFY_CODE
-        3. Built-in VEHU defaults (SM1234 / SM1234!!)
+        3. Built-in VEHU defaults (PRO1234 / PRO1234!!)
 
         Args:
             access_code: VistA Access Code (optional).
