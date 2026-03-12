@@ -73,6 +73,22 @@ These are the built-in defaults used when no explicit values or environment vari
 
 ## Installation
 
+### From a GitHub Release
+
+Download the latest wheel from [Releases](https://github.com/CivicActions/vista-clients/releases/latest) and install with pip (or uv):
+
+```bash
+pip install vista_clients-<VERSION>-py3-none-any.whl
+```
+
+Or install directly from the release URL (replace `<VERSION>` with the desired version, e.g. `0.1.0`):
+
+```bash
+pip install "https://github.com/CivicActions/vista-clients/releases/download/v<VERSION>/vista_clients-<VERSION>-py3-none-any.whl"
+```
+
+### Development Install
+
 ```bash
 cd vista-clients
 uv sync
