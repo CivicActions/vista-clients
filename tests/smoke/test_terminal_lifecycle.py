@@ -63,9 +63,8 @@ class TestCommandExecution:
         """T029: send_and_wait() with custom prompt pattern."""
         with VistATerminal("localhost", 2222) as term:
             term.login()
-            # Send empty to get menu, then use a custom pattern for the next prompt
-            term.send_and_wait("")
-            output = term.send_and_wait("", prompt=r"Select .+ Option:")
+            # "?" lists options and re-displays the menu prompt
+            output = term.send_and_wait("?", prompt=r"Select .+ Option:")
             assert isinstance(output, str)
 
     def test_prompt_timeout_raises(self) -> None:
