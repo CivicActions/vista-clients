@@ -1,17 +1,17 @@
-"""T047: Validate quickstart.md code examples execute against VEHU.
+"""T047: Validate quickstart.md code examples execute against a live VistA environment.
 
 SC-001: The basic usage example should work in 10 lines or fewer.
 """
 
 import pytest
 
-from vista_test.rpc import VistABroker, literal
+from vista_clients.rpc import VistABroker, literal
 
 pytestmark = pytest.mark.smoke
 
 
 class TestQuickstart:
-    """Quickstart.md examples should work against live VEHU."""
+    """Quickstart.md examples should work against a live VistA environment."""
 
     def test_basic_usage_10_lines(self):
         """SC-001: Connect, authenticate, context, RPC in ≤10 lines."""
@@ -38,9 +38,9 @@ class TestQuickstart:
 
     def test_error_handling_pattern(self):
         """Quickstart example: error handling with specific exceptions."""
-        from vista_test.rpc.errors import (
+        from vista_clients.rpc.errors import (
             AuthenticationError,
-            ConnectionError,
+            BrokerConnectionError,
             ContextError,
             RPCError,
         )
@@ -52,7 +52,7 @@ class TestQuickstart:
                 broker.create_context("OR CPRS GUI CHART")
                 response = broker.call_rpc("ORWU USERINFO")
                 assert response.raw
-        except (ConnectionError, AuthenticationError, ContextError, RPCError):
+        except (BrokerConnectionError, AuthenticationError, ContextError, RPCError):
             pytest.fail("Basic quickstart flow should not raise")
 
     def test_keepalive_ping(self):
@@ -68,11 +68,11 @@ class TestQuickstart:
 
 
 class TestTerminalQuickstart:
-    """Terminal quickstart.md examples should work against live VEHU."""
+    """Terminal quickstart.md examples should work against a live VistA environment."""
 
     def test_basic_terminal_usage_under_15_lines(self) -> None:
         """SC-001: Basic terminal usage in under 15 lines."""
-        from vista_test.terminal import VistATerminal
+        from vista_clients.terminal import VistATerminal
 
         with VistATerminal("localhost", 2222) as term:
             term.login()
@@ -81,7 +81,7 @@ class TestTerminalQuickstart:
 
     def test_explicit_connection_steps(self) -> None:
         """Quickstart example: explicit connect/login/disconnect."""
-        from vista_test.terminal import VistATerminal
+        from vista_clients.terminal import VistATerminal
 
         term = VistATerminal("localhost", 2222)
         banner = term.connect()

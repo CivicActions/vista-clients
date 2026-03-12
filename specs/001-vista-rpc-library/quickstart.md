@@ -17,7 +17,7 @@
 
 3. **Install the package**:
    ```bash
-   cd /path/to/vista-test
+   cd /path/to/vista-clients
    uv sync
    ```
 
@@ -28,11 +28,11 @@
 ### Connect, Authenticate, and Call an RPC
 
 ```python
-from vista_test.rpc import VistABroker
+from vista_clients.rpc import VistABroker
 
 # Context manager handles connect and disconnect automatically
 with VistABroker("localhost", 9430) as broker:
-    # Authenticate (uses VEHU defaults: SM1234 / SM1234!!)
+    # Authenticate (uses built-in demonstration defaults: SM1234 / SM1234!!)
     duz = broker.authenticate()
     print(f"Logged in as DUZ: {duz}")
 
@@ -47,7 +47,7 @@ with VistABroker("localhost", 9430) as broker:
 ### Call an RPC with Parameters
 
 ```python
-from vista_test.rpc import VistABroker, literal, list_param
+from vista_clients.rpc import VistABroker, literal, list_param
 
 with VistABroker("localhost", 9430) as broker:
     broker.authenticate()
@@ -85,8 +85,8 @@ with VistABroker("my-vista-server", 9430) as broker:
 ### Error Handling
 
 ```python
-from vista_test.rpc import VistABroker
-from vista_test.rpc.errors import (
+from vista_clients.rpc import VistABroker
+from vista_clients.rpc.errors import (
     ConnectionError,
     AuthenticationError,
     ContextError,
@@ -131,7 +131,7 @@ with VistABroker("localhost", 9430) as broker:
 # Unit tests (no server needed)
 uv run pytest tests/unit/
 
-# Smoke tests (requires VEHU running on localhost:9430)
+# Smoke tests (requires a running VistA instance on localhost:9430; VEHU shown)
 uv run pytest tests/smoke/
 ```
 
@@ -140,7 +140,7 @@ uv run pytest tests/smoke/
 ## Project Layout
 
 ```
-src/vista_test/rpc/
+src/vista_clients/rpc/
 ├── __init__.py      # Public re-exports
 ├── broker.py        # VistABroker high-level API
 ├── protocol.py      # XWB message construction, parsing, cipher
@@ -150,5 +150,5 @@ src/vista_test/rpc/
 tests/
 ├── unit/            # Protocol encoding, cipher, message format
 ├── contract/        # Known-good byte sequence verification
-└── smoke/           # Full lifecycle against VEHU
+└── smoke/           # Full lifecycle against a live VistA instance (VEHU shown)
 ```

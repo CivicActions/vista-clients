@@ -17,7 +17,7 @@
 
 3. **Install the package**:
    ```bash
-   cd /path/to/vista-test
+   cd /path/to/vista-clients
    uv sync
    ```
 
@@ -28,11 +28,11 @@
 ### Connect, Login, Send a Command
 
 ```python
-from vista_test.terminal import VistATerminal
+from vista_clients.terminal import VistATerminal
 
 # Context manager handles connect, login, and disconnect
 with VistATerminal("localhost", 2222) as term:
-    # login() uses VEHU defaults: PRO1234 / PRO1234!!
+    # login() uses built-in demonstration defaults: PRO1234 / PRO1234!!
     term.login()
 
     # Send a menu option and read the response
@@ -43,7 +43,7 @@ with VistATerminal("localhost", 2222) as term:
 ### Explicit Connection Steps
 
 ```python
-from vista_test.terminal import VistATerminal
+from vista_clients.terminal import VistATerminal
 
 term = VistATerminal("localhost", 2222)
 
@@ -156,8 +156,8 @@ with VistATerminal("localhost", 2222) as term:
 ## Error Handling
 
 ```python
-from vista_test.terminal import VistATerminal
-from vista_test.terminal.errors import (
+from vista_clients.terminal import VistATerminal
+from vista_clients.terminal.errors import (
     ConnectionError,
     AuthenticationError,
     PromptTimeoutError,
@@ -190,7 +190,7 @@ uv run pytest tests/unit/
 # Contract tests (verify wire format expectations)
 uv run pytest tests/contract/
 
-# Smoke tests (requires VEHU running on localhost:2222)
+# Smoke tests (requires a running VistA instance on localhost:2222; VEHU shown)
 uv run pytest tests/smoke/
 ```
 
@@ -199,7 +199,7 @@ uv run pytest tests/smoke/
 ## Project Layout
 
 ```
-src/vista_test/terminal/
+src/vista_clients/terminal/
 ├── __init__.py      # Public re-exports
 ├── session.py       # VistATerminal high-level API
 ├── expect.py        # ExpectChannel prompt matching engine
@@ -210,5 +210,5 @@ src/vista_test/terminal/
 tests/
 ├── unit/            # Expect engine, VT100 stripping, state machine
 ├── contract/        # Known-good prompt pattern matching
-└── smoke/           # Full lifecycle against VEHU
+└── smoke/           # Full lifecycle against a live VistA instance (VEHU shown)
 ```

@@ -5,7 +5,7 @@ These tests verify that our message builders produce bytes compatible
 with the VistA RPC Broker server.
 """
 
-from vista_test.rpc.protocol import (
+from vista_clients.rpc.protocol import (
     build_connect_message,
     build_disconnect_message,
     build_rpc_message,

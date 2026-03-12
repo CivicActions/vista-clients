@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import pytest
 
-from vista_test.terminal.errors import (
+from vista_clients.terminal.errors import (
     AuthenticationError,
-    ConnectionError,
     LoginPromptError,
     PromptTimeoutError,
     SessionError,
     StateError,
+    TerminalConnectionError,
     TerminalError,
 )
 
@@ -19,7 +19,7 @@ class TestExceptionHierarchy:
     """All terminal errors inherit from TerminalError."""
 
     def test_connection_error_is_terminal_error(self) -> None:
-        err = ConnectionError("cannot connect")
+        err = TerminalConnectionError("cannot connect")
         assert isinstance(err, TerminalError)
 
     def test_authentication_error_is_terminal_error(self) -> None:
@@ -93,8 +93,8 @@ class TestIndependentCatchability:
     """Each exception type can be caught independently."""
 
     def test_catch_connection_error(self) -> None:
-        with pytest.raises(ConnectionError):
-            raise ConnectionError("fail")
+        with pytest.raises(TerminalConnectionError):
+            raise TerminalConnectionError("fail")
 
     def test_catch_authentication_error(self) -> None:
         with pytest.raises(AuthenticationError):
@@ -119,20 +119,20 @@ class TestIndependentCatchability:
     def test_catch_base_catches_all(self) -> None:
         """Catching TerminalError catches any subclass."""
         with pytest.raises(TerminalError):
-            raise ConnectionError("fail")
+            raise TerminalConnectionError("fail")
         with pytest.raises(TerminalError):
             raise AuthenticationError("fail", level="ssh")
         with pytest.raises(TerminalError):
             raise PromptTimeoutError("fail", partial_output="", patterns=[])
 
     def test_connection_error_does_not_catch_authentication(self) -> None:
-        """ConnectionError catch does NOT match AuthenticationError."""
+        """TerminalConnectionError catch does NOT match AuthenticationError."""
         with pytest.raises(AuthenticationError):
             raise AuthenticationError("fail", level="ssh")
-        # This should NOT be caught as ConnectionError
+        # This should NOT be caught as TerminalConnectionError
         try:
             raise AuthenticationError("fail", level="ssh")
-        except ConnectionError:
-            pytest.fail("AuthenticationError should not be caught as ConnectionError")
+        except TerminalConnectionError:
+            pytest.fail("AuthenticationError should not be caught as TerminalConnectionError")
         except AuthenticationError:
             pass

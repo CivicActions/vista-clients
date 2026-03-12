@@ -5,38 +5,38 @@ Roll-and-Scroll menu interface via SSH.
 
 Usage::
 
-    from vista_test.terminal import VistATerminal
+    from vista_clients.terminal import VistATerminal
 
     with VistATerminal("localhost", 2222) as term:
         term.login()
         output = term.send_and_wait("Systems Manager Menu")
 """
 
-from vista_test.terminal.errors import (
+from vista_clients.terminal.errors import (
     AuthenticationError,
-    ConnectionError,
     LoginPromptError,
     PromptTimeoutError,
     SessionError,
     StateError,
+    TerminalConnectionError,
     TerminalError,
 )
-from vista_test.terminal.session import (
+from vista_clients.terminal.session import (
     CommandRecord,
     SessionState,
     VistATerminal,
 )
-from vista_test.terminal.vt100 import strip_escape_sequences
+from vista_clients.terminal.vt100 import strip_escape_sequences
 
 __all__ = [
     "AuthenticationError",
     "CommandRecord",
-    "ConnectionError",
     "LoginPromptError",
     "PromptTimeoutError",
     "SessionError",
     "SessionState",
     "StateError",
+    "TerminalConnectionError",
     "TerminalError",
     "VistATerminal",
     "strip_escape_sequences",

@@ -2,8 +2,8 @@
 
 import pytest
 
-from vista_test.rpc.errors import RPCError
-from vista_test.rpc.protocol import (
+from vista_clients.rpc.errors import RPCError
+from vista_clients.rpc.protocol import (
     CipherType,
     ParamType,
     RPCParameter,
@@ -168,7 +168,7 @@ class TestBuildConnectMessage:
     """T019: Verify exact byte output of TCPConnect command."""
 
     def test_starts_with_prefix(self):
-        msg = build_connect_message("localhost", "vista-test")
+        msg = build_connect_message("localhost", "vista-clients")
         text = msg.decode("utf-8")
         assert text.startswith("[XWB]1130")
 

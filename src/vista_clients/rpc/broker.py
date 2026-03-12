@@ -11,14 +11,14 @@ import logging
 import os
 import re
 
-from vista_test.rpc.errors import (
+from vista_clients.rpc.errors import (
     AuthenticationError,
-    ConnectionError,
+    BrokerConnectionError,
     ContextError,
     HandshakeError,
     StateError,
 )
-from vista_test.rpc.protocol import (
+from vista_clients.rpc.protocol import (
     DEFAULT_CIPHER,
     CipherType,
     CredentialSource,
@@ -31,7 +31,7 @@ from vista_test.rpc.protocol import (
     encrypt,
     parse_response,
 )
-from vista_test.rpc.transport import Transport
+from vista_clients.rpc.transport import Transport
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,7 @@ _REDACT_RE = re.compile(
     re.IGNORECASE,
 )
 
-# VEHU default credentials (PROGRAMMER,ONE)
+# Built-in demonstration credentials (PROGRAMMER,ONE)
 _DEFAULT_ACCESS = "PRO1234"
 _DEFAULT_VERIFY = "PRO1234!!"
 
@@ -62,7 +62,7 @@ class VistABroker:
         app_name: Application name sent during TCPConnect handshake.
         cipher: Cipher table variant to use for encryption.
             Use ``CipherType.TRADITIONAL`` (default) for standard
-            VA VistA / WorldVistA VEHU, or ``CipherType.OSEHRA``
+            VA VistA deployments, or ``CipherType.OSEHRA``
             for OSEHRA-derived systems with modified cipher tables.
 
     Raises:
@@ -75,7 +75,7 @@ class VistABroker:
         port: int = 9430,
         *,
         timeout: float = 30.0,
-        app_name: str = "vista-test",
+        app_name: str = "vista-clients",
         cipher: CipherType = DEFAULT_CIPHER,
     ) -> None:
         if not 1 <= port <= 65535:
@@ -119,7 +119,7 @@ class VistABroker:
         server ack. After this call, the session is in HANDSHAKED state.
 
         Raises:
-            ConnectionError: If TCP connection fails or times out.
+            BrokerConnectionError: If TCP connection fails or times out.
             HandshakeError: If the server rejects the TCPConnect command.
             StateError: If already connected.
         """
@@ -131,7 +131,7 @@ class VistABroker:
             self._transport.connect()
         except Exception as exc:
             self._transport = None
-            raise ConnectionError(str(exc)) from exc
+            raise BrokerConnectionError(str(exc)) from exc
 
         self._state = SessionState.CONNECTED
         logger.debug("TCP connected to %s:%d", self._host, self._port)
@@ -171,7 +171,7 @@ class VistABroker:
         Credential resolution order:
         1. Explicit arguments (if both provided)
         2. Environment variables VISTA_ACCESS_CODE / VISTA_VERIFY_CODE
-        3. Built-in VEHU defaults (PRO1234 / PRO1234!!)
+        3. Built-in demonstration defaults (PRO1234 / PRO1234!!)
 
         Args:
             access_code: VistA Access Code (optional).
@@ -207,7 +207,7 @@ class VistABroker:
             [
                 RPCParameter(
                     param_type=__import__(
-                        "vista_test.rpc.protocol", fromlist=["ParamType"]
+                        "vista_clients.rpc.protocol", fromlist=["ParamType"]
                     ).ParamType.LITERAL,
                     value=av_encrypted,
                 )
@@ -254,7 +254,7 @@ class VistABroker:
 
         assert self._transport is not None
 
-        from vista_test.rpc.protocol import ParamType
+        from vista_clients.rpc.protocol import ParamType
 
         encrypted_context = encrypt(option_name, self._cipher)
         msg = build_rpc_message(
@@ -289,7 +289,7 @@ class VistABroker:
 
         Raises:
             RPCError: If the server returns an error.
-            ConnectionError: If the connection is broken mid-call.
+            BrokerConnectionError: If the connection is broken mid-call.
             StateError: If context has not been set.
         """
         if self._state != SessionState.CONTEXT_SET:
@@ -306,7 +306,9 @@ class VistABroker:
             raw = self._transport.receive()
             logger.debug("RPC << %d bytes", len(raw))
         except Exception as exc:
-            raise ConnectionError(f"Connection broken during RPC '{rpc_name}': {exc}") from exc
+            raise BrokerConnectionError(
+                f"Connection broken during RPC '{rpc_name}': {exc}"
+            ) from exc
 
         logger.debug("RPC response length: %d", len(raw))
         return parse_response(raw)
@@ -315,7 +317,7 @@ class VistABroker:
         """Send XWB IM HERE keepalive to reset server timeout.
 
         Raises:
-            ConnectionError: If the connection is broken.
+            BrokerConnectionError: If the connection is broken.
             StateError: If not connected.
         """
         if self._state == SessionState.DISCONNECTED:
@@ -328,7 +330,7 @@ class VistABroker:
             self._transport.send(msg)
             self._transport.receive()
         except Exception as exc:
-            raise ConnectionError(f"Ping failed: {exc}") from exc
+            raise BrokerConnectionError(f"Ping failed: {exc}") from exc
 
     def disconnect(self) -> None:
         """Send disconnect command and close the TCP connection.
@@ -363,7 +365,7 @@ class VistABroker:
             self.connect()
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb) -> None:  # type: ignore[no-untyped-def]
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """Exit context manager. Calls disconnect()."""
         self.disconnect()
 

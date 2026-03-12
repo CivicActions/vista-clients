@@ -2,21 +2,21 @@
 
 **Feature**: 002-vista-terminal-library  
 **Date**: 2026-02-15  
-**Package**: `vista_test.terminal`
+**Package**: `vista_clients.terminal`
 
 ---
 
 ## Public API Surface
 
-### Module: `vista_test.terminal`
+### Module: `vista_clients.terminal`
 
-The public API is re-exported from `vista_test/terminal/__init__.py`. Users import from this single entry point.
+The public API is re-exported from `vista_clients/terminal/__init__.py`. Users import from this single entry point.
 
 ---
 
 ## 1. `VistATerminal` — Primary API Class
 
-**Module**: `vista_test.terminal.session`
+**Module**: `vista_clients.terminal.session`
 
 The high-level orchestrator for interactive VistA terminal sessions.
 
@@ -71,7 +71,7 @@ def connect(
     SSH credential resolution order:
     1. Explicit arguments (if both provided)
     2. Environment variables VISTA_SSH_USER / VISTA_SSH_PASSWORD
-    3. Built-in VEHU defaults (vehutied / tied)
+    3. Built-in built-in demonstration defaults (vehutied / tied)
 
     Args:
         ssh_user: SSH username (optional).
@@ -103,7 +103,7 @@ def login(
     VistA credential resolution order:
     1. Explicit arguments (if both provided)
     2. Environment variables VISTA_ACCESS_CODE / VISTA_VERIFY_CODE
-    3. Built-in VEHU defaults (PRO1234 / PRO1234!!)
+    3. Built-in built-in demonstration defaults (PRO1234 / PRO1234!!)
 
     Args:
         access_code: VistA Access Code (optional).
@@ -300,7 +300,7 @@ def __exit__(self, exc_type, exc_val, exc_tb) -> None:
 
 ## 2. `CommandRecord` — Command/Output Exchange
 
-**Module**: `vista_test.terminal.session`
+**Module**: `vista_clients.terminal.session`
 
 ```python
 @dataclass(frozen=True)
@@ -326,7 +326,7 @@ class CommandRecord:
 
 ## 3. Enumerations
 
-**Module**: `vista_test.terminal.session`
+**Module**: `vista_clients.terminal.session`
 
 ```python
 class SessionState(enum.Enum):
@@ -340,7 +340,7 @@ class SessionState(enum.Enum):
 
 ## 4. Utility Functions
 
-**Module**: `vista_test.terminal.vt100`
+**Module**: `vista_clients.terminal.vt100`
 
 ```python
 def strip_escape_sequences(text: str) -> str:
@@ -362,7 +362,7 @@ def strip_escape_sequences(text: str) -> str:
 
 ## 5. Exception Hierarchy
 
-**Module**: `vista_test.terminal.errors`
+**Module**: `vista_clients.terminal.errors`
 
 ```python
 class TerminalError(Exception):
@@ -415,7 +415,7 @@ class StateError(TerminalError):
 
 ## 6. Internal Contracts (not public API)
 
-### SSH Transport — `vista_test.terminal.transport`
+### SSH Transport — `vista_clients.terminal.transport`
 
 ```python
 class SSHTransport:
@@ -447,7 +447,7 @@ class SSHTransport:
     def is_connected(self) -> bool: ...
 ```
 
-### Expect Engine — `vista_test.terminal.expect`
+### Expect Engine — `vista_clients.terminal.expect`
 
 ```python
 class ExpectChannel:
@@ -488,16 +488,16 @@ class ExpectChannel:
 
 ---
 
-## Re-exports from `vista_test.terminal.__init__`
+## Re-exports from `vista_clients.terminal.__init__`
 
 ```python
-from vista_test.terminal.session import (
+from vista_clients.terminal.session import (
     VistATerminal,
     CommandRecord,
     SessionState,
 )
-from vista_test.terminal.vt100 import strip_escape_sequences
-from vista_test.terminal.errors import (
+from vista_clients.terminal.vt100 import strip_escape_sequences
+from vista_clients.terminal.errors import (
     TerminalError,
     ConnectionError,
     AuthenticationError,

@@ -276,7 +276,7 @@ the session arrives at the main VistA menu.
   session establishment.
 - **FR-004**: The library MUST source default OS-level
   credentials from environment variables (`VISTA_SSH_USER`,
-  `VISTA_SSH_PASSWORD`) and fall back to built-in VEHU defaults
+  `VISTA_SSH_PASSWORD`) and fall back to built-in built-in demonstration defaults
   (`vehutied`/`tied`) when no overrides are provided.
 - **FR-005**: The library MUST emulate a VT100-compatible
   terminal so that VistA's screen formatting (cursor
@@ -320,7 +320,7 @@ the session arrives at the main VistA menu.
   appropriate VistA login prompts.
 - **FR-018**: The library MUST source default VistA credentials
   from environment variables (`VISTA_ACCESS_CODE`,
-  `VISTA_VERIFY_CODE`) and fall back to built-in VEHU defaults
+  `VISTA_VERIFY_CODE`) and fall back to built-in built-in demonstration defaults
   (`PRO1234`/`PRO1234!!`) when no overrides are provided.
 - **FR-019**: The library MUST raise distinct, typed errors for:
   connection failures, OS-level authentication failures, VistA

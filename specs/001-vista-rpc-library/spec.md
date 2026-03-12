@@ -231,7 +231,7 @@ idiomatic.
   Access Code and Verify Code pairs.
 - **FR-006**: The library MUST source default credentials from
   environment variables (`VISTA_ACCESS_CODE`,
-  `VISTA_VERIFY_CODE`) and fall back to built-in VEHU defaults
+  `VISTA_VERIFY_CODE`) and fall back to built-in built-in demonstration defaults
   when no overrides are provided.
 - **FR-007**: The library MUST invoke any named RPC and deliver
   parameters of the following types: literal string (numeric

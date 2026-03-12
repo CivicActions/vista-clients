@@ -10,7 +10,7 @@ class VistAError(Exception):
     """Base exception for all VistA RPC Broker errors."""
 
 
-class ConnectionError(VistAError):
+class BrokerConnectionError(VistAError):
     """TCP connection failure or broken connection."""
 
 

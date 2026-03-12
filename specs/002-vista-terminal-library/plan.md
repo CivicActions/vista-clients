@@ -59,7 +59,7 @@ specs/002-vista-terminal-library/
 ### Source Code (repository root)
 
 ```text
-src/vista_test/terminal/
+src/vista_clients/terminal/
 ├── __init__.py          # Public re-exports (VistATerminal, errors, CommandRecord, etc.)
 ├── session.py           # VistATerminal: high-level session orchestrator, state machine
 ├── expect.py            # ExpectChannel: pexpect-style prompt matching over paramiko channel
@@ -75,13 +75,13 @@ tests/
 │   ├── test_transport.py # SSHTransport with mock paramiko.SSHClient
 │   └── test_vt100.py    # Escape sequence stripping edge cases
 ├── contract/
-│   └── test_prompt_patterns.py  # Known-good prompt regex matching against VEHU output
+│   └── test_prompt_patterns.py  # Known-good prompt regex matching against a reference VistA environment (VEHU) output
 └── smoke/
-    ├── test_terminal_lifecycle.py  # Full connect→login→command→disconnect against VEHU
-    └── test_quickstart.py          # Quickstart code examples against VEHU
+    ├── test_terminal_lifecycle.py  # Full connect→login→command→disconnect against a reference VistA environment (VEHU)
+    └── test_quickstart.py          # Quickstart code examples against a reference VistA environment (VEHU)
 ```
 
-**Structure Decision**: Single-project layout matching the existing `src/vista_test/rpc/` pattern. The `src/vista_test/terminal/` package contains the library. Tests are in a parallel `tests/` tree with three tiers: unit (no server), contract (no server, pattern verification), and smoke (requires VEHU Docker on port 2222).
+**Structure Decision**: Single-project layout matching the existing `src/vista_clients/rpc/` pattern. The `src/vista_clients/terminal/` package contains the library. Tests are in a parallel `tests/` tree with three tiers: unit (no server), contract (no server, pattern verification), and smoke (runs against a reference VistA environment (VEHU) Docker on port 2222).
 
 ## pytest-xdist Compatibility
 

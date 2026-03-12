@@ -10,12 +10,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from vista_test.rpc.broker import _DEFAULT_ACCESS, _DEFAULT_VERIFY, VistABroker
-from vista_test.rpc.errors import (
+from vista_clients.rpc.broker import _DEFAULT_ACCESS, _DEFAULT_VERIFY, VistABroker
+from vista_clients.rpc.errors import (
     HandshakeError,
     StateError,
 )
-from vista_test.rpc.protocol import CredentialSource, SessionState
+from vista_clients.rpc.protocol import CredentialSource, SessionState
 
 # ---------------------------------------------------------------------------
 # T029: Credential resolution order
@@ -142,7 +142,7 @@ class TestStateEnforcement:
 class TestHandshakeFailure:
     """Verify HandshakeError raised when server rejects connection."""
 
-    @patch("vista_test.rpc.broker.Transport")
+    @patch("vista_clients.rpc.broker.Transport")
     def test_rejection_response_raises_handshake_error(self, MockTransport):
         """Server returns non-'accept' response."""
         mock_transport = MagicMock()
@@ -154,7 +154,7 @@ class TestHandshakeFailure:
         with pytest.raises(HandshakeError, match="rejected"):
             broker.connect()
 
-    @patch("vista_test.rpc.broker.Transport")
+    @patch("vista_clients.rpc.broker.Transport")
     def test_transport_error_during_handshake(self, MockTransport):
         """Transport exception during handshake raises HandshakeError."""
         mock_transport = MagicMock()

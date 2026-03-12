@@ -1,6 +1,7 @@
-"""Smoke tests: full lifecycle against a live VEHU server.
+"""Smoke tests: full lifecycle against a live VistA server.
 
-These tests require a running WorldVistA VEHU Docker container
+These tests require a running VistA environment (the WorldVistA VEHU image
+is used in examples)
 on localhost:9430.
 
 Run with: uv run pytest tests/smoke/ -v
@@ -8,13 +9,13 @@ Run with: uv run pytest tests/smoke/ -v
 
 import pytest
 
-from vista_test.rpc import VistABroker
-from vista_test.rpc.errors import (
+from vista_clients.rpc import VistABroker
+from vista_clients.rpc.errors import (
     AuthenticationError,
-    ConnectionError,
+    BrokerConnectionError,
     RPCError,
 )
-from vista_test.rpc.protocol import SessionState
+from vista_clients.rpc.protocol import SessionState
 
 # Mark all tests in this module as smoke tests
 pytestmark = pytest.mark.smoke
@@ -26,7 +27,7 @@ pytestmark = pytest.mark.smoke
 
 
 class TestConnection:
-    """T013: TCP connect/disconnect against VEHU."""
+    """T013: TCP connect/disconnect against a VistA server."""
 
     def test_connect_and_disconnect(self):
         broker = VistABroker("localhost", 9430)
@@ -44,7 +45,7 @@ class TestConnection:
         assert not broker.is_connected
 
     def test_connection_refused(self):
-        with pytest.raises(ConnectionError):
+        with pytest.raises(BrokerConnectionError):
             VistABroker("localhost", 19999).connect()
 
 
@@ -76,7 +77,7 @@ class TestAuthentication:
     """T030, T031, T056: Authentication smoke tests."""
 
     def test_authenticate_with_defaults(self):
-        """T030: VEHU defaults should work."""
+        """T030: Built-in demonstration defaults should work."""
         with VistABroker("localhost", 9430) as broker:
             duz = broker.authenticate()
             assert duz
@@ -124,7 +125,7 @@ class TestRPCInvocation:
 
     def test_call_rpc_literal_param(self):
         """T037: Call RPC with literal parameter."""
-        from vista_test.rpc.protocol import literal
+        from vista_clients.rpc.protocol import literal
 
         broker = self._authenticated_broker()
         try:
@@ -192,7 +193,7 @@ class TestResponseParsing:
         """T042: RPC returning single value."""
         broker = self._setup_broker()
         try:
-            from vista_test.rpc.protocol import literal
+            from vista_clients.rpc.protocol import literal
 
             response = broker.call_rpc("XWB GET VARIABLE VALUE", [literal("DUZ")])
             assert response.value is not None or response.lines is not None

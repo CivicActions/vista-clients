@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 
 import paramiko
 
-from vista_test.terminal.errors import AuthenticationError, ConnectionError
+from vista_clients.terminal.errors import AuthenticationError, TerminalConnectionError
 
 if TYPE_CHECKING:
     pass
@@ -52,7 +52,7 @@ class SSHTransport:
             terminal_type: Terminal type for the pty (default ``"vt100"``).
 
         Raises:
-            ConnectionError: If the SSH connection fails or times out.
+            TerminalConnectionError: If the SSH connection fails or times out.
             AuthenticationError: If OS-level password is rejected.
         """
         logger.info(
@@ -82,7 +82,7 @@ class SSHTransport:
             ) from exc
         except Exception as exc:
             client.close()
-            raise ConnectionError(
+            raise TerminalConnectionError(
                 f"SSH connection to {self._host}:{self._port} failed: {exc}",
             ) from exc
 
@@ -91,7 +91,7 @@ class SSHTransport:
             channel.settimeout(None)  # Non-blocking handled by expect engine
         except Exception as exc:
             client.close()
-            raise ConnectionError(
+            raise TerminalConnectionError(
                 f"Failed to open interactive shell on {self._host}:{self._port}: {exc}",
             ) from exc
 
@@ -104,10 +104,10 @@ class SSHTransport:
         """The interactive shell channel.
 
         Raises:
-            ConnectionError: If not connected.
+            TerminalConnectionError: If not connected.
         """
         if self._channel is None:
-            raise ConnectionError("Not connected — no channel available")
+            raise TerminalConnectionError("Not connected — no channel available")
         return self._channel
 
     @property

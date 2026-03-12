@@ -18,7 +18,7 @@ import re as _re
 from dataclasses import dataclass, field
 from random import randint
 
-from vista_test.rpc.errors import RPCError
+from vista_clients.rpc.errors import RPCError
 
 # ---------------------------------------------------------------------------
 # Enumerations
@@ -186,7 +186,7 @@ def lpack(value: str) -> str:
 # ---------------------------------------------------------------------------
 
 # Traditional cipher table — original VistA/Kernel (XUSRB1.m).
-# Used by standard VA VistA, WorldVistA VEHU, and most deployments.
+# Used by standard VA VistA and most deployments.
 CIPHER_TRADITIONAL: list[str] = [
     "wkEo-ZJt!dG)49K{nX1BS$vH<&:Myf*>Ae0jQW=;|#PsO`'%+rmb[gpqN,l6/hFC@DcUa ]z~R}\"V\\iIxu?872.(TYL5_3",
     "rKv`R;M/9BqAF%&tSs#Vh)dO1DZP> *fX'u[.4lY=-mg_ci802N7LTG<]!CWo:3?{+,5Q}(@jaExn$~p\\IyHwzU\"|k6Jeb",
@@ -241,7 +241,7 @@ _CIPHER_TABLES: dict[CipherType, list[str]] = {
     CipherType.OSEHRA: CIPHER_OSEHRA,
 }
 
-# Default cipher type — Traditional is used by standard VA VistA / VEHU
+# Default cipher type — Traditional is used by standard VA VistA deployments
 DEFAULT_CIPHER = CipherType.TRADITIONAL
 
 

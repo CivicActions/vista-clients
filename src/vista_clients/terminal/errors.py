@@ -12,7 +12,7 @@ class TerminalError(Exception):
     """Base exception for all VistA terminal errors."""
 
 
-class ConnectionError(TerminalError):
+class TerminalConnectionError(TerminalError):
     """SSH connection failure or broken connection.
 
     Raised when the SSH connection cannot be established, times out,

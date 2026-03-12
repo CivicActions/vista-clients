@@ -1,17 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
-name = "vista-test"
+name = "vista-clients"
 version = "0.1.0"
-description = "VistA functional test framework and tests"
+description = "General-purpose Python clients for VistA RPC and terminal interfaces"
 readme = "README.md"
+license = "Apache-2.0"
 requires-python = ">=3.10"
-dependencies = [
-    "paramiko>=3.0",
+authors = [
+    { name = "Owen Barton" },
 ]
+keywords = ["vista", "rpc", "terminal", "ehr", "mumps", "veterans"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Healthcare Industry",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+dependencies = []
+
+[project.optional-dependencies]
+terminal = ["paramiko>=3.0"]
+
+[project.urls]
+Repository = "https://github.com/CloudVistA/vista-clients"
+Issues = "https://github.com/CloudVistA/vista-clients/issues"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = [
-    "smoke: tests requiring a live VEHU server",
+    "smoke: tests requiring a live VistA environment (VEHU shown in docs)",
 ]
 
 [tool.ruff]
@@ -24,7 +52,7 @@ select = ["E", "F", "I", "W", "UP", "B", "SIM", "RUF"]
 ignore = ["E501", "SIM102", "SIM105", "SIM117"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["vista_test"]
+known-first-party = ["vista_clients"]
 
 [tool.pyright]
 pythonVersion = "3.10"
@@ -34,8 +62,11 @@ exclude = ["tests"]
 
 [dependency-groups]
 dev = [
+    "paramiko>=3.0",
+    "pre-commit>=4.0",
     "pytest>=7.0",
     "pytest-xdist>=3.0",
     "pyright>=1.1.408",
     "ruff>=0.15.1",
+    "ty>=0.0.1a7",
 ]

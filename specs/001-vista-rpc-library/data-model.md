@@ -148,7 +148,7 @@ class SessionState(enum.Enum):
 class CredentialSource(enum.Enum):
     EXPLICIT = "explicit"       # Passed directly by caller
     ENVIRONMENT = "environment" # From environment variables
-    DEFAULT = "default"         # Built-in VEHU defaults
+    DEFAULT = "default"         # Built-in built-in demonstration defaults
 ```
 
 ---

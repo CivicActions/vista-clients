@@ -1,25 +1,24 @@
-# vista-test
+# vista-clients
 
-A Python toolkit for programmatic interaction with VistA (Veterans Health Information Systems and Technology Architecture). Provides two complementary libraries for automated testing and integration:
+General-purpose Python clients for programmatic interaction with VistA (Veterans Health Information Systems and Technology Architecture).
 
-| Package | Transport | Port | Use Case |
-|---------|-----------|------|----------|
-| `vista_test.rpc` | XWB wire protocol over TCP | 9430 | Invoke Remote Procedure Calls (RPCs) |
-| `vista_test.terminal` | SSH interactive shell (paramiko) | 2222 | Drive Roll-and-Scroll menus, scrape screen output |
+| Module | Transport | Default Port | Use Case |
+|--------|-----------|--------------|----------|
+| `vista_clients.rpc` | XWB wire protocol over TCP | 9430 | Invoke Remote Procedure Calls (RPCs) |
+| `vista_clients.terminal` | SSH interactive shell (paramiko) | 2222 | Drive Roll-and-Scroll menus, scrape screen output |
 
-Both libraries are pure Python (3.10+), designed for the [WorldVistA VEHU](https://hub.docker.com/r/worldvista/vehu) Docker image, and follow a consistent credential-resolution pattern (explicit args → environment variables → VEHU defaults).
+Both modules are pure Python (3.10+) and can target any compatible VistA system. The [WorldVistA VEHU](https://hub.docker.com/r/worldvista/vehu) Docker image is used as the default reference environment — built-in demonstration credentials (`PRO1234` / `PRO1234!!`, `vehutied` / `tied`) match VEHU out of the box. Credential resolution follows: explicit args → environment variables → built-in VEHU defaults.
 
 ---
 
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
-- [VistA VEHU Docker Setup](#vista-vehu-docker-setup)
+- [VEHU Reference Environment](#vehu-reference-environment)
 - [Installation](#installation)
-- [RPC Broker Library](#rpc-broker-library-vista_testrpc)
-- [Terminal Library](#terminal-library-vista_testterminal)
+- [RPC Broker Library](#rpc-broker-library-vista_clientsrpc)
+- [Terminal Library](#terminal-library-vista_clientsterminal)
 - [Running Tests](#running-tests)
-- [Project Structure](#project-structure)
 - [Environment Variables](#environment-variables)
 
 ---
@@ -27,14 +26,14 @@ Both libraries are pure Python (3.10+), designed for the [WorldVistA VEHU](https
 ## Prerequisites
 
 - **Python 3.10+**
-- **Docker** (for the VEHU VistA instance)
+- **Docker** (for the VEHU reference VistA instance used by smoke tests)
 - **[uv](https://docs.astral.sh/uv/)** package manager (recommended)
 
 ---
 
-## VistA VEHU Docker Setup
+## VEHU Reference Environment
 
-The [WorldVistA VEHU](https://hub.docker.com/r/worldvista/vehu) image provides a fully configured VistA instance with demonstration users, an RPC Broker listener on port 9430, and an SSH server on port 2222.
+The [WorldVistA VEHU](https://hub.docker.com/r/worldvista/vehu) image provides a fully configured VistA instance with demonstration users, an RPC Broker listener on port 9430, and an SSH server on port 22 (mapped to 2222 locally). Smoke tests and default credentials assume a running VEHU instance.
 
 ### Start VEHU
 
@@ -43,17 +42,13 @@ docker pull worldvista/vehu
 docker run -d --name vehu -p 9430:9430 -p 2222:22 worldvista/vehu
 ```
 
-Wait **~60 seconds** for the VistA environment to finish loading (the Broker listener and SSH daemon start after the MUMPS routines initialize).
+Wait **~60 seconds** for VistA to finish loading (Broker listener and SSH daemon start after MUMPS routines initialize).
 
 ### Verify It's Running
 
 ```bash
-# Check RPC Broker listener (port 9430)
 nc -z localhost 9430 && echo "RPC Broker is up"
-
-# Check SSH (port 2222)
-ssh -o StrictHostKeyChecking=no -p 2222 vehutied@localhost
-# Password: tied
+nc -z localhost 2222 && echo "SSH is up"
 ```
 
 ### Stop / Restart
@@ -64,7 +59,7 @@ docker start vehu    # data persists within the container
 docker rm -f vehu    # destroy and re-create from image
 ```
 
-### VEHU Default Credentials
+### Default Credentials
 
 | Level | Username / Code | Password / Code | Notes |
 |-------|----------------|-----------------|-------|
@@ -72,51 +67,46 @@ docker rm -f vehu    # destroy and re-create from image
 | SSH (programmer mode) | `vehuprog` | `prog` | Drops to MUMPS direct mode (`mumps -dir`) |
 | VistA Application | `PRO1234` | `PRO1234!!` | PROGRAMMER,ONE — full system access |
 
-> **Tip**: Use `vehutied` to land directly in the VistA Roll-and-Scroll environment. Use `vehuprog` for MUMPS direct/programmer mode.
-
-Both libraries default to these credentials when no explicit values or environment variables are provided.
+These are the built-in defaults used when no explicit values or environment variables are set.
 
 ---
 
 ## Installation
 
 ```bash
-cd vista-test
+cd vista-clients
 uv sync
 ```
 
-This installs the `vista_test` package in development mode along with all dev dependencies (pytest, ruff, pyright, pytest-xdist).
+This installs `vista_clients` in development mode with all dev dependencies.
 
 ---
 
-## RPC Broker Library (`vista_test.rpc`)
+## RPC Broker Library (`vista_clients.rpc`)
 
-A clean Pythonic API for the VistA XWB wire protocol. Handles TCP connection, XWB handshake, authentication (with dual cipher support), application context management, and RPC invocation.
+A Pythonic API for the VistA XWB wire protocol. Handles TCP connection, XWB handshake, authentication (with dual cipher support), application context management, and RPC invocation.
 
 ### Quick Start
 
 ```python
-from vista_test.rpc import VistABroker
+from vista_clients.rpc import VistABroker
 
 with VistABroker("localhost", 9430) as broker:
-    # Authenticate (uses VEHU defaults: PRO1234 / PRO1234!!)
     duz = broker.authenticate()
     print(f"Logged in as DUZ: {duz}")
 
-    # Set application context
     broker.create_context("OR CPRS GUI CHART")
 
-    # Call an RPC
     response = broker.call_rpc("ORWU USERINFO")
     print(response.value)
 ```
 
 ### Connection Lifecycle
 
-The `VistABroker` context manager handles the full lifecycle: TCP connect → XWB handshake → ... → disconnect. You can also manage it manually:
+The `VistABroker` context manager handles: TCP connect → XWB handshake → ... → disconnect. You can also manage it manually:
 
 ```python
-from vista_test.rpc import VistABroker
+from vista_clients.rpc import VistABroker
 
 broker = VistABroker("localhost", 9430)
 broker.connect()          # TCP + XWB handshake
@@ -132,7 +122,7 @@ broker.disconnect()       # #BYE# + close socket
 ### RPC Parameters
 
 ```python
-from vista_test.rpc import VistABroker, literal, list_param
+from vista_clients.rpc import VistABroker, literal, list_param
 
 with VistABroker("localhost", 9430) as broker:
     broker.authenticate()
@@ -158,15 +148,10 @@ with VistABroker("localhost", 9430) as broker:
 ```python
 response = broker.call_rpc("ORWU USERINFO")
 
-# Single-value response
-print(response.value)       # "12345^DOE,JOHN^..."
-
-# Array/multi-line response
-print(response.lines)       # ["line1", "line2", ...]
+print(response.value)       # "12345^DOE,JOHN^..." (single-value)
+print(response.lines)       # ["line1", "line2", ...] (array)
 print(response.is_array)    # True if lines is populated
-
-# Raw server response (before parsing)
-print(response.raw)
+print(response.raw)         # Raw server response before parsing
 ```
 
 ### Custom Credentials
@@ -198,9 +183,9 @@ with VistABroker("localhost", 9430) as broker:
 ### Error Handling
 
 ```python
-from vista_test.rpc import VistABroker
-from vista_test.rpc.errors import (
-    ConnectionError,
+from vista_clients.rpc import VistABroker
+from vista_clients.rpc.errors import (
+    BrokerConnectionError,
     HandshakeError,
     AuthenticationError,
     ContextError,
@@ -213,7 +198,7 @@ try:
         broker.authenticate()
         broker.create_context("OR CPRS GUI CHART")
         response = broker.call_rpc("SOME RPC")
-except ConnectionError as e:
+except BrokerConnectionError as e:
     print(f"Cannot reach server: {e}")
 except HandshakeError as e:
     print(f"XWB handshake rejected: {e}")
@@ -249,20 +234,18 @@ except StateError as e:
 
 ---
 
-## Terminal Library (`vista_test.terminal`)
+## Terminal Library (`vista_clients.terminal`)
 
 An SSH-based interactive terminal driver for VistA's Roll-and-Scroll interface. Built on paramiko with a custom expect engine for prompt detection, pagination handling, and VT100 escape sequence stripping.
 
 ### Quick Start
 
 ```python
-from vista_test.terminal import VistATerminal
+from vista_clients.terminal import VistATerminal
 
 with VistATerminal("localhost", 2222) as term:
-    # login() handles ACCESS CODE + VERIFY CODE + terminal type
     term.login()
 
-    # Send a command and wait for the next prompt
     output = term.send_and_wait("User Management")
     print(output)
 ```
@@ -272,16 +255,16 @@ with VistATerminal("localhost", 2222) as term:
 The `VistATerminal` context manager handles: SSH connect → OS login → VistA login → ... → disconnect. You can also manage each step:
 
 ```python
-from vista_test.terminal import VistATerminal
+from vista_clients.terminal import VistATerminal
 
 term = VistATerminal("localhost", 2222)
 
 # Step 1: SSH connect → OS login → arrive at ACCESS CODE prompt
-banner = term.connect()       # SSH user: vehutied / tied
+banner = term.connect()
 print(banner)
 
 # Step 2: VistA application login
-greeting = term.login()       # Access: PRO1234 / PRO1234!!
+greeting = term.login()
 print(greeting)               # "Good evening DOCTOR"
 
 # Step 3: Interact with menus
@@ -378,9 +361,9 @@ with VistATerminal("localhost", 2222) as term:
 ### Error Handling
 
 ```python
-from vista_test.terminal import VistATerminal
-from vista_test.terminal.errors import (
-    ConnectionError,
+from vista_clients.terminal import VistATerminal
+from vista_clients.terminal.errors import (
+    TerminalConnectionError,
     AuthenticationError,
     SessionError,
     PromptTimeoutError,
@@ -392,7 +375,7 @@ try:
     with VistATerminal("localhost", 2222) as term:
         term.login()
         output = term.send_and_wait("Some Menu Option")
-except ConnectionError as e:
+except TerminalConnectionError as e:
     print(f"SSH connection failed: {e}")
 except AuthenticationError as e:
     print(f"Bad credentials ({e.level} level): {e}")
@@ -440,12 +423,11 @@ Tests are organized in three tiers:
 |------|-----------|-----------------|---------------|
 | **Unit** | `tests/unit/` | No | Protocol encoding, cipher, state machine, mocks |
 | **Contract** | `tests/contract/` | No | Wire format against known-good byte sequences |
-| **Smoke** | `tests/smoke/` | Yes (VEHU) | Full lifecycle against a live VistA instance |
+| **Smoke** | `tests/smoke/` | Yes (VEHU) | Full lifecycle against a running VEHU instance |
 
 ### Unit & Contract Tests (No Server)
 
 ```bash
-# All offline tests
 uv run pytest tests/unit/ tests/contract/ -v
 
 # Run in parallel with pytest-xdist
@@ -455,11 +437,10 @@ uv run pytest tests/unit/ tests/contract/ -n auto
 ### Smoke Tests (Requires VEHU)
 
 ```bash
-# Start VEHU first
+# Start VEHU (see above)
 docker run -d --name vehu -p 9430:9430 -p 2222:22 worldvista/vehu
 sleep 60  # wait for VistA to initialize
 
-# Run smoke tests
 uv run pytest tests/smoke/ -v
 ```
 
@@ -469,98 +450,23 @@ uv run pytest tests/smoke/ -v
 uv run pytest -v
 ```
 
-### Alpine Container Test
-
-Verify the library runs in a minimal container with no development tools:
-
-```bash
-docker build -f Dockerfile.test -t vista-test-alpine .
-docker run --rm vista-test-alpine
-```
-
 ### Linting & Type Checking
 
 ```bash
-# Lint and format check
+# Run all checks via pre-commit
+uv run pre-commit run --all-files
+
+# Or individually:
 uv run ruff check .
 uv run ruff format --check .
-
-# Type checking
-uv run pyright
-```
-
----
-
-## Project Structure
-
-```
-vista-test/
-├── pyproject.toml                      # Package config, dependencies, tool settings
-├── Dockerfile.test                     # Alpine container verification
-├── README.md
-│
-├── src/vista_test/
-│   ├── __init__.py
-│   ├── rpc/                            # RPC Broker library
-│   │   ├── __init__.py                 # Public re-exports (15 symbols)
-│   │   ├── broker.py                   # VistABroker lifecycle orchestrator
-│   │   ├── protocol.py                 # XWB messages, S/L-PACK, cipher, response parsing
-│   │   ├── transport.py                # TCP socket wrapper with chr(4) EOT framing
-│   │   └── errors.py                   # VistAError exception hierarchy (7 classes)
-│   └── terminal/                       # Terminal interaction library
-│       ├── __init__.py                 # Public re-exports (11 symbols)
-│       ├── session.py                  # VistATerminal session orchestrator
-│       ├── expect.py                   # ExpectChannel: prompt matching over paramiko
-│       ├── transport.py                # SSHTransport: paramiko SSH wrapper
-│       ├── vt100.py                    # VT100/ANSI escape sequence stripping
-│       └── errors.py                   # TerminalError exception hierarchy (7 classes)
-│
-├── tests/
-│   ├── unit/                           # Offline tests — no server needed
-│   │   ├── test_protocol.py            # XWB encoding, cipher, message format
-│   │   ├── test_broker.py              # Broker state machine, credential resolution
-│   │   ├── test_transport.py           # TCP transport with mocked sockets
-│   │   ├── test_errors.py              # RPC exception hierarchy
-│   │   ├── test_stdlib_only.py         # Verify RPC library uses only stdlib
-│   │   ├── test_terminal_errors.py      # Terminal exception hierarchy
-│   │   ├── test_terminal_expect.py     # ExpectChannel prompt matching
-│   │   ├── test_session.py             # Terminal state machine, credentials
-│   │   ├── test_terminal_transport.py  # SSHTransport with mocked paramiko
-│   │   └── test_vt100.py              # Escape sequence stripping
-│   ├── contract/                       # Wire format verification
-│   │   ├── test_wire_format.py         # RPC known-good byte sequences
-│   │   └── test_prompt_patterns.py     # Terminal prompt regex vs VEHU output
-│   └── smoke/                          # Live server tests (requires VEHU)
-│       ├── test_lifecycle.py           # RPC: connect → auth → RPC → disconnect
-│       ├── test_quickstart.py          # RPC quickstart examples
-│       └── test_terminal_lifecycle.py  # Terminal: SSH → login → command → disconnect
-│
-└── specs/                              # Feature specifications
-    ├── 001-vista-rpc-library/
-    │   ├── spec.md                     # User stories and acceptance criteria
-    │   ├── research.md                 # XWB protocol analysis
-    │   ├── plan.md                     # Architecture and tech stack
-    │   ├── data-model.md               # Entity definitions
-    │   ├── quickstart.md               # Usage examples
-    │   ├── tasks.md                    # Implementation task breakdown
-    │   ├── contracts/api.md            # Public API surface
-    │   └── checklists/requirements.md  # Verification checklist
-    └── 002-vista-terminal-library/
-        ├── spec.md
-        ├── research.md
-        ├── plan.md
-        ├── data-model.md
-        ├── quickstart.md
-        ├── tasks.md
-        ├── contracts/api.md
-        └── checklists/requirements.md
+uv run ty check --python-version 3.10 src/
 ```
 
 ---
 
 ## Environment Variables
 
-Both libraries share a consistent credential resolution order: **explicit arguments → environment variables → VEHU defaults**.
+Both libraries share a consistent credential resolution order: **explicit arguments → environment variables → built-in VEHU defaults**.
 
 | Variable | Used By | Default | Description |
 |----------|---------|---------|-------------|
@@ -573,4 +479,4 @@ Both libraries share a consistent credential resolution order: **explicit argume
 
 ## License
 
-See individual package files for license information.
+Apache-2.0 — see [LICENSE](LICENSE) for details.

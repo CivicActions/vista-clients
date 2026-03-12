@@ -6,8 +6,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from vista_test.terminal.errors import AuthenticationError, ConnectionError
-from vista_test.terminal.transport import SSHTransport
+from vista_clients.terminal.errors import AuthenticationError, TerminalConnectionError
+from vista_clients.terminal.transport import SSHTransport
 
 
 @pytest.fixture()
@@ -26,7 +26,7 @@ def mock_ssh_client() -> MagicMock:
 class TestSSHTransportConnect:
     """Tests for SSHTransport.connect()."""
 
-    @patch("vista_test.terminal.transport.paramiko.SSHClient")
+    @patch("vista_clients.terminal.transport.paramiko.SSHClient")
     def test_connect_success(self, mock_cls: MagicMock) -> None:
         mock_client = mock_cls.return_value
         mock_transport = MagicMock()
@@ -52,7 +52,7 @@ class TestSSHTransportConnect:
         mock_client.invoke_shell.assert_called_once_with(term="vt100")
         assert t.is_connected is True
 
-    @patch("vista_test.terminal.transport.paramiko.SSHClient")
+    @patch("vista_clients.terminal.transport.paramiko.SSHClient")
     def test_connect_auth_failure(self, mock_cls: MagicMock) -> None:
         import paramiko as _paramiko
 
@@ -64,13 +64,13 @@ class TestSSHTransportConnect:
             t.connect("user", "wrongpass")
         assert exc_info.value.level == "ssh"
 
-    @patch("vista_test.terminal.transport.paramiko.SSHClient")
+    @patch("vista_clients.terminal.transport.paramiko.SSHClient")
     def test_connect_network_failure(self, mock_cls: MagicMock) -> None:
         mock_client = mock_cls.return_value
         mock_client.connect.side_effect = OSError("Connection refused")
 
         t = SSHTransport("badhost", 2222, 5.0)
-        with pytest.raises(ConnectionError, match="SSH connection.*failed"):
+        with pytest.raises(TerminalConnectionError, match="SSH connection.*failed"):
             t.connect("user", "pass")
 
 
@@ -81,7 +81,7 @@ class TestSSHTransportState:
         t = SSHTransport("localhost", 2222, 30.0)
         assert t.is_connected is False
 
-    @patch("vista_test.terminal.transport.paramiko.SSHClient")
+    @patch("vista_clients.terminal.transport.paramiko.SSHClient")
     def test_close_disconnects(self, mock_cls: MagicMock) -> None:
         mock_client = mock_cls.return_value
         mock_transport = MagicMock()
@@ -98,7 +98,7 @@ class TestSSHTransportState:
         t.close()
         assert t.is_connected is False
 
-    @patch("vista_test.terminal.transport.paramiko.SSHClient")
+    @patch("vista_clients.terminal.transport.paramiko.SSHClient")
     def test_close_idempotent(self, mock_cls: MagicMock) -> None:
         mock_client = mock_cls.return_value
         mock_client.invoke_shell.return_value = MagicMock(closed=False)
@@ -114,5 +114,5 @@ class TestSSHTransportState:
 
     def test_channel_property_raises_when_disconnected(self) -> None:
         t = SSHTransport("localhost", 2222, 30.0)
-        with pytest.raises(ConnectionError, match="Not connected"):
+        with pytest.raises(TerminalConnectionError, match="Not connected"):
             _ = t.channel

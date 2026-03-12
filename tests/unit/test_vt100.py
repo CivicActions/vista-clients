@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from vista_test.terminal.vt100 import strip_escape_sequences
+from vista_clients.terminal.vt100 import strip_escape_sequences
 
 
 class TestStripEscapeSequences:

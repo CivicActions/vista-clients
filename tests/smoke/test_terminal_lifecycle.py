@@ -1,18 +1,19 @@
-"""Smoke tests for VistA terminal lifecycle against VEHU.
+"""Smoke tests for VistA terminal lifecycle.
 
-These tests require a running VEHU Docker container on port 2222.
+These tests require a running VistA environment on port 2222
+(VEHU is used in local examples).
 """
 
 from __future__ import annotations
 
 import pytest
 
-from vista_test.terminal.errors import (
+from vista_clients.terminal.errors import (
     AuthenticationError,
-    ConnectionError,
     PromptTimeoutError,
+    TerminalConnectionError,
 )
-from vista_test.terminal.session import SessionState, VistATerminal
+from vista_clients.terminal.session import SessionState, VistATerminal
 
 pytestmark = pytest.mark.smoke
 
@@ -21,7 +22,7 @@ class TestSessionLifecycle:
     """US1: SSH connect, state verification, and disconnect."""
 
     def test_connect_and_disconnect(self) -> None:
-        """T020: Connect to VEHU, verify CONNECTED state, disconnect."""
+        """T020: Connect to VistA, verify CONNECTED state, disconnect."""
         term = VistATerminal("localhost", 2222)
         banner = term.connect()
         try:
@@ -40,9 +41,9 @@ class TestSessionLifecycle:
         assert term.state == SessionState.DISCONNECTED
 
     def test_unreachable_host_raises_connection_error(self) -> None:
-        """T022: Connection to unreachable host raises ConnectionError."""
+        """T022: Connection to unreachable host raises TerminalConnectionError."""
         term = VistATerminal("192.0.2.1", 2222, timeout=3.0)
-        with pytest.raises(ConnectionError):
+        with pytest.raises(TerminalConnectionError):
             term.connect()
 
 
@@ -79,7 +80,7 @@ class TestVistaLogin:
     """US5: VistA application login."""
 
     def test_login_with_defaults(self) -> None:
-        """T035: Login with VEHU defaults, verify AUTHENTICATED."""
+        """T035: Login with built-in demonstration defaults, verify AUTHENTICATED."""
         with VistATerminal("localhost", 2222) as term:
             greeting = term.login()
             assert term.state == SessionState.AUTHENTICATED

@@ -1,6 +1,6 @@
 """T050: Verify pure-Python constraint (FR-011, FR-012).
 
-Audit all imports in the vista_test.rpc package to confirm no
+Audit all imports in the vista_clients.rpc package to confirm no
 native extensions or platform-specific dependencies are used.
 Only Python standard library modules are allowed.
 """
@@ -15,7 +15,7 @@ import pytest
 _STDLIB_MODULES = set(sys.stdlib_module_names)
 
 # Path to our package source
-_SRC_DIR = Path(__file__).resolve().parent.parent.parent / "src" / "vista_test" / "rpc"
+_SRC_DIR = Path(__file__).resolve().parent.parent.parent / "src" / "vista_clients" / "rpc"
 
 
 def _get_all_imports(filepath: Path) -> set[str]:
@@ -40,13 +40,13 @@ class TestPurePython:
     def test_no_third_party_imports(self):
         """All imports in src/ are either stdlib or internal."""
         py_files = list(_SRC_DIR.glob("*.py"))
-        assert len(py_files) > 0, "No Python files found in src/vista_test/rpc/"
+        assert len(py_files) > 0, "No Python files found in src/vista_clients/rpc/"
 
         for filepath in py_files:
             imports = _get_all_imports(filepath)
             for mod in imports:
                 is_stdlib = mod in _STDLIB_MODULES
-                is_internal = mod == "vista_test"
+                is_internal = mod == "vista_clients"
                 assert is_stdlib or is_internal, f"{filepath.name} imports non-stdlib module: {mod}"
 
     def test_no_ctypes_usage(self):

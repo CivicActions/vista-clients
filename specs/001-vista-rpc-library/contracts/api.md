@@ -2,21 +2,21 @@
 
 **Feature**: 001-vista-rpc-library  
 **Date**: 2026-02-14  
-**Package**: `vista_test.rpc`
+**Package**: `vista_clients.rpc`
 
 ---
 
 ## Public API Surface
 
-### Module: `vista_test.rpc`
+### Module: `vista_clients.rpc`
 
-The public API is re-exported from `vista_test/rpc/__init__.py`. Users import from this single entry point.
+The public API is re-exported from `vista_clients/rpc/__init__.py`. Users import from this single entry point.
 
 ---
 
 ## 1. `VistABroker` — Primary API Class
 
-**Module**: `vista_test.rpc.broker`
+**Module**: `vista_clients.rpc.broker`
 
 The high-level orchestrator for the full RPC Broker lifecycle.
 
@@ -30,7 +30,7 @@ class VistABroker:
         port: int = 9430,
         *,
         timeout: float = 30.0,
-        app_name: str = "vista-test",
+        app_name: str = "vista-clients",
     ) -> None:
         """Create a VistA RPC Broker client.
 
@@ -70,7 +70,7 @@ def authenticate(
     Credential resolution order:
     1. Explicit arguments (if both provided)
     2. Environment variables VISTA_ACCESS_CODE / VISTA_VERIFY_CODE
-    3. Built-in VEHU defaults (SM1234 / SM1234!!)
+    3. Built-in built-in demonstration defaults (SM1234 / SM1234!!)
 
     Args:
         access_code: VistA Access Code (optional).
@@ -157,7 +157,7 @@ def __exit__(self, exc_type, exc_val, exc_tb) -> None:
 ### Usage Example
 
 ```python
-from vista_test.rpc import VistABroker, literal
+from vista_clients.rpc import VistABroker, literal
 
 with VistABroker("localhost", 9430) as broker:
     broker.authenticate()
@@ -170,7 +170,7 @@ with VistABroker("localhost", 9430) as broker:
 
 ## 2. `RPCParameter` — Parameter Construction
 
-**Module**: `vista_test.rpc.protocol`
+**Module**: `vista_clients.rpc.protocol`
 
 ### Factory Functions (preferred API)
 
@@ -223,7 +223,7 @@ class RPCParameter:
 
 ## 3. `RPCResponse` — Response Container
 
-**Module**: `vista_test.rpc.protocol`
+**Module**: `vista_clients.rpc.protocol`
 
 ```python
 @dataclass(frozen=True)
@@ -248,7 +248,7 @@ class RPCResponse:
 
 ## 4. Enumerations
 
-**Module**: `vista_test.rpc.protocol`
+**Module**: `vista_clients.rpc.protocol`
 
 ```python
 class ParamType(enum.Enum):
@@ -269,7 +269,7 @@ class SessionState(enum.Enum):
 
 ## 5. Exception Hierarchy
 
-**Module**: `vista_test.rpc.errors`
+**Module**: `vista_clients.rpc.errors`
 
 ```python
 class VistAError(Exception):
@@ -298,7 +298,7 @@ class StateError(VistAError):
 
 ## 6. Internal Contracts (not public API)
 
-### Transport Layer — `vista_test.rpc.transport`
+### Transport Layer — `vista_clients.rpc.transport`
 
 ```python
 class Transport:
@@ -313,7 +313,7 @@ class Transport:
     def is_connected(self) -> bool: ...
 ```
 
-### Protocol Layer — `vista_test.rpc.protocol`
+### Protocol Layer — `vista_clients.rpc.protocol`
 
 ```python
 # Message construction
@@ -352,11 +352,11 @@ def parse_response(raw: str) -> RPCResponse:
 
 ---
 
-## Re-exports from `vista_test.rpc.__init__`
+## Re-exports from `vista_clients.rpc.__init__`
 
 ```python
-from vista_test.rpc.broker import VistABroker
-from vista_test.rpc.protocol import (
+from vista_clients.rpc.broker import VistABroker
+from vista_clients.rpc.protocol import (
     RPCParameter,
     RPCResponse,
     ParamType,
@@ -364,7 +364,7 @@ from vista_test.rpc.protocol import (
     literal,
     list_param,
 )
-from vista_test.rpc.errors import (
+from vista_clients.rpc.errors import (
     VistAError,
     ConnectionError,
     HandshakeError,

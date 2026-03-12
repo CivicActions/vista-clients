@@ -366,12 +366,12 @@ Unit and contract tests provide fast feedback and catch regressions without requ
 ## 11. Credential Management
 
 ### Decision
-Environment variable sourcing with built-in VEHU defaults.
+Environment variable sourcing with built-in built-in demonstration defaults.
 
 ### Credential Resolution Order
 1. Explicit constructor arguments (highest priority)
 2. Environment variables: `VISTA_ACCESS_CODE`, `VISTA_VERIFY_CODE`
-3. Built-in VEHU defaults: Access=`SM1234`, Verify=`SM1234!!`
+3. Built-in built-in demonstration defaults: Access=`SM1234`, Verify=`SM1234!!`
 
 ### Logging Redaction
 Per FR-015, credentials MUST be redacted in all log output. The Access Code and Verify Code values are replaced with `***REDACTED***` in any log message, regardless of log level.

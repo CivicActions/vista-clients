@@ -51,7 +51,7 @@ specs/001-vista-rpc-library/
 ### Source Code (repository root)
 
 ```text
-src/vista_test/rpc/
+src/vista_clients/rpc/
 ├── __init__.py          # Public re-exports (VistABroker, literal, list_param, errors)
 ├── broker.py            # VistABroker: high-level lifecycle orchestrator
 ├── protocol.py          # XWB message construction, S/L-PACK, cipher, response parsing
@@ -65,10 +65,10 @@ tests/
 ├── contract/
 │   └── test_wire_format.py # Known-good byte sequences from reference implementation
 └── smoke/
-    └── test_lifecycle.py # Full connect→auth→RPC→disconnect against VEHU
+    └── test_lifecycle.py # Full connect→auth→RPC→disconnect against a reference VistA environment (VEHU)
 ```
 
-**Structure Decision**: Single-project layout. The `src/vista_test/rpc/` package contains the library. Tests are in a parallel `tests/` tree with three tiers: unit (no server), contract (no server, byte-level verification), and smoke (requires VEHU Docker).
+**Structure Decision**: Single-project layout. The `src/vista_clients/rpc/` package contains the library. Tests are in a parallel `tests/` tree with three tiers: unit (no server), contract (no server, byte-level verification), and smoke (runs against a reference VistA environment (VEHU) Docker).
 
 ## Complexity Tracking
 

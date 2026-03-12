@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import socket
 
-from vista_test.rpc.errors import ConnectionError
+from vista_clients.rpc.errors import BrokerConnectionError
 
 # End-of-transmission marker
 _EOT = chr(4)
@@ -40,7 +40,7 @@ class Transport:
         """Open TCP connection to the server.
 
         Raises:
-            ConnectionError: If the connection fails or times out.
+            BrokerConnectionError: If the connection fails or times out.
         """
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -48,9 +48,11 @@ class Transport:
             sock.connect((self._host, self._port))
             self._sock = sock
         except TimeoutError as exc:
-            raise ConnectionError(f"Connection timed out to {self._host}:{self._port}") from exc
+            raise BrokerConnectionError(
+                f"Connection timed out to {self._host}:{self._port}"
+            ) from exc
         except OSError as exc:
-            raise ConnectionError(
+            raise BrokerConnectionError(
                 f"Connection refused to {self._host}:{self._port}: {exc}"
             ) from exc
 
@@ -61,15 +63,15 @@ class Transport:
             data: Raw bytes to send.
 
         Raises:
-            ConnectionError: If the socket is closed or send fails.
+            BrokerConnectionError: If the socket is closed or send fails.
         """
         if self._sock is None:
-            raise ConnectionError("Not connected")
+            raise BrokerConnectionError("Not connected")
         try:
             self._sock.sendall(data)
         except OSError as exc:
             self._sock = None
-            raise ConnectionError(f"Send failed: {exc}") from exc
+            raise BrokerConnectionError(f"Send failed: {exc}") from exc
 
     def receive(self) -> str:
         """Read data from the socket until ``chr(4)`` (EOT) terminator.
@@ -81,18 +83,18 @@ class Transport:
             Decoded response string.
 
         Raises:
-            ConnectionError: If the socket is closed, times out,
+            BrokerConnectionError: If the socket is closed, times out,
                 or the remote end disconnects.
         """
         if self._sock is None:
-            raise ConnectionError("Not connected")
+            raise BrokerConnectionError("Not connected")
 
         chunks: list[bytes] = []
         try:
             while True:
                 chunk = self._sock.recv(_RECV_SIZE)
                 if not chunk:
-                    raise ConnectionError("Connection closed by server")
+                    raise BrokerConnectionError("Connection closed by server")
                 if _EOT_BYTE in chunk:
                     # Take everything before EOT
                     idx = chunk.index(_EOT_BYTE)
@@ -100,10 +102,10 @@ class Transport:
                     break
                 chunks.append(chunk)
         except TimeoutError as exc:
-            raise ConnectionError("Receive timed out") from exc
+            raise BrokerConnectionError("Receive timed out") from exc
         except OSError as exc:
             self._sock = None
-            raise ConnectionError(f"Receive failed: {exc}") from exc
+            raise BrokerConnectionError(f"Receive failed: {exc}") from exc
 
         raw = b"".join(chunks)
         text = raw.decode("utf-8", errors="replace")

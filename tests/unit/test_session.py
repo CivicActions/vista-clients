@@ -13,8 +13,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from vista_test.terminal.errors import StateError
-from vista_test.terminal.session import (
+from vista_clients.terminal.errors import StateError
+from vista_clients.terminal.session import (
     CredentialSource,
     SessionState,
     VistATerminal,

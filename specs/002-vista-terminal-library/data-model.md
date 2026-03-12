@@ -127,7 +127,7 @@ Represents authentication details at two levels.
 **Credential Resolution Order** (same for both SSH and VistA):
 1. Explicit arguments (if provided)
 2. Environment variables
-3. Built-in VEHU defaults
+3. Built-in built-in demonstration defaults
 
 ---
 
@@ -172,7 +172,7 @@ class PromptCategory(enum.Enum):
 class CredentialSource(enum.Enum):
     EXPLICIT = "explicit"       # Passed directly by caller
     ENVIRONMENT = "environment" # From environment variables
-    DEFAULT = "default"         # Built-in VEHU defaults
+    DEFAULT = "default"         # Built-in built-in demonstration defaults
 ```
 
 ---
@@ -187,7 +187,7 @@ TerminalSession 1──1 Credentials (for authentication)
 OutputBuffer    1──* CommandRecord (over lifetime)
 ```
 
-**Implementation Note**: The `TerminalSession` entity is implemented as the `VistATerminal` class in `vista_test.terminal.session`.
+**Implementation Note**: The `TerminalSession` entity is implemented as the `VistATerminal` class in `vista_clients.terminal.session`.
 
 ---
 

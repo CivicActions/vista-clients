@@ -14,7 +14,7 @@ import re
 import time
 from typing import TYPE_CHECKING
 
-from vista_test.terminal.errors import ConnectionError, PromptTimeoutError
+from vista_clients.terminal.errors import PromptTimeoutError, TerminalConnectionError
 
 if TYPE_CHECKING:
     import paramiko
@@ -82,7 +82,7 @@ class ExpectChannel:
 
         Raises:
             PromptTimeoutError: If no pattern matches within *timeout*.
-            ConnectionError: If the channel is closed during reading.
+            TerminalConnectionError: If the channel is closed during reading.
         """
         effective_timeout = timeout if timeout is not None else self._timeout
         deadline = time.monotonic() + effective_timeout
@@ -107,7 +107,7 @@ class ExpectChannel:
 
             # Check for closed channel
             if self._channel.closed:
-                raise ConnectionError("SSH channel closed while waiting for prompt")
+                raise TerminalConnectionError("SSH channel closed while waiting for prompt")
 
             # Small sleep to avoid busy-waiting
             time.sleep(min(_POLL_INTERVAL, max(0, deadline - time.monotonic())))
@@ -122,10 +122,10 @@ class ExpectChannel:
             text: The text to send.
 
         Raises:
-            ConnectionError: If the channel is closed.
+            TerminalConnectionError: If the channel is closed.
         """
         if self._channel.closed:
-            raise ConnectionError("SSH channel is closed")
+            raise TerminalConnectionError("SSH channel is closed")
         data = text.encode("utf-8")
         while data:
             if not self._channel.send_ready():
@@ -167,7 +167,7 @@ class ExpectChannel:
             try:
                 raw = self._channel.recv(_RECV_SIZE)
             except Exception as exc:
-                raise ConnectionError(f"Error reading from SSH channel: {exc}") from exc
+                raise TerminalConnectionError(f"Error reading from SSH channel: {exc}") from exc
             if not raw:
                 break
             decoded = self._decoder.decode(raw)

@@ -6,9 +6,9 @@ type AND by its parent type (VistAError).
 
 import pytest
 
-from vista_test.rpc.errors import (
+from vista_clients.rpc.errors import (
     AuthenticationError,
-    ConnectionError,
+    BrokerConnectionError,
     ContextError,
     HandshakeError,
     RPCError,
@@ -23,7 +23,7 @@ class TestExceptionHierarchy:
     @pytest.mark.parametrize(
         "exc_class",
         [
-            ConnectionError,
+            BrokerConnectionError,
             HandshakeError,
             AuthenticationError,
             ContextError,
@@ -39,7 +39,7 @@ class TestExceptionHierarchy:
     @pytest.mark.parametrize(
         "exc_class",
         [
-            ConnectionError,
+            BrokerConnectionError,
             HandshakeError,
             AuthenticationError,
             ContextError,
@@ -56,7 +56,7 @@ class TestExceptionHierarchy:
         """All error types are subclasses of Exception."""
         for exc_class in (
             VistAError,
-            ConnectionError,
+            BrokerConnectionError,
             HandshakeError,
             AuthenticationError,
             ContextError,
@@ -68,7 +68,7 @@ class TestExceptionHierarchy:
     def test_distinct_types(self):
         """Each exception type is distinct (not aliases)."""
         types = {
-            ConnectionError,
+            BrokerConnectionError,
             HandshakeError,
             AuthenticationError,
             ContextError,
@@ -80,7 +80,7 @@ class TestExceptionHierarchy:
     def test_message_preserved(self):
         """Error message is accessible via str()."""
         for exc_class in (
-            ConnectionError,
+            BrokerConnectionError,
             HandshakeError,
             AuthenticationError,
             ContextError,
@@ -95,5 +95,5 @@ class TestExceptionHierarchy:
         with pytest.raises(AuthenticationError):
             try:
                 raise AuthenticationError("auth fail")
-            except ConnectionError:
-                pytest.fail("ConnectionError should not catch AuthenticationError")
+            except BrokerConnectionError:
+                pytest.fail("BrokerConnectionError should not catch AuthenticationError")

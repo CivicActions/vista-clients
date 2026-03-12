@@ -8,8 +8,8 @@ from unittest.mock import MagicMock, PropertyMock
 
 import pytest
 
-from vista_test.terminal.errors import ConnectionError, PromptTimeoutError
-from vista_test.terminal.expect import ExpectChannel
+from vista_clients.terminal.errors import PromptTimeoutError, TerminalConnectionError
+from vista_clients.terminal.expect import ExpectChannel
 
 
 def _make_channel(chunks: list[bytes], *, closed: bool = False) -> MagicMock:
@@ -154,14 +154,14 @@ class TestExpectClosedChannel:
     def test_expect_raises_on_closed_channel(self) -> None:
         channel = _make_channel([], closed=True)
         ec = ExpectChannel(channel, timeout=0.3, settle_delay=0.05)
-        with pytest.raises(ConnectionError, match="channel closed"):
+        with pytest.raises(TerminalConnectionError, match="channel closed"):
             ec.expect([re.compile(r"anything")])
 
     def test_send_raises_on_closed_channel(self) -> None:
         channel = MagicMock()
         type(channel).closed = PropertyMock(return_value=True)
         ec = ExpectChannel(channel, timeout=5.0, settle_delay=0.1)
-        with pytest.raises(ConnectionError, match="channel is closed"):
+        with pytest.raises(TerminalConnectionError, match="channel is closed"):
             ec.send("test")
 
 

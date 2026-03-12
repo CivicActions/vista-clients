@@ -1,12 +1,12 @@
 """Contract tests for default prompt patterns.
 
-Each test verifies that a default prompt regex matches known VEHU output
+Each test verifies that a default prompt regex matches known VistA output
 samples captured from research.md.
 """
 
 from __future__ import annotations
 
-from vista_test.terminal.session import DEFAULT_PROMPT_PATTERNS, PromptPattern
+from vista_clients.terminal.session import DEFAULT_PROMPT_PATTERNS, PromptPattern
 
 
 def _find_pattern(name: str) -> PromptPattern:
@@ -18,7 +18,7 @@ def _find_pattern(name: str) -> PromptPattern:
 
 
 class TestNavigationPatterns:
-    """Verify navigation prompt patterns match VEHU output."""
+    """Verify navigation prompt patterns match known VistA output."""
 
     def test_select_option_systems_manager(self) -> None:
         pp = _find_pattern("select_option")
@@ -46,7 +46,7 @@ class TestNavigationPatterns:
 
 
 class TestLoginPatterns:
-    """Verify login prompt patterns match VEHU output."""
+    """Verify login prompt patterns match known VistA output."""
 
     def test_access_code(self) -> None:
         pp = _find_pattern("access_code")
@@ -62,7 +62,7 @@ class TestLoginPatterns:
 
 
 class TestPaginationPatterns:
-    """Verify pagination prompt patterns match VEHU output."""
+    """Verify pagination prompt patterns match known VistA output."""
 
     def test_press_return(self) -> None:
         pp = _find_pattern("press_return")

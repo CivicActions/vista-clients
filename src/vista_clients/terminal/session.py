@@ -14,15 +14,15 @@ import time
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, NamedTuple
 
-from vista_test.terminal.errors import (
+from vista_clients.terminal.errors import (
     AuthenticationError,
     LoginPromptError,
     SessionError,
     StateError,
 )
-from vista_test.terminal.expect import ExpectChannel
-from vista_test.terminal.transport import SSHTransport
-from vista_test.terminal.vt100 import strip_escape_sequences
+from vista_clients.terminal.expect import ExpectChannel
+from vista_clients.terminal.transport import SSHTransport
+from vista_clients.terminal.vt100 import strip_escape_sequences
 
 if TYPE_CHECKING:
     pass
@@ -57,7 +57,7 @@ class CredentialSource(enum.Enum):
 
     EXPLICIT = "explicit"  # Passed directly by caller
     ENVIRONMENT = "environment"  # From environment variables
-    DEFAULT = "default"  # Built-in VEHU defaults
+    DEFAULT = "default"  # Built-in demonstration defaults
 
 
 # ---------------------------------------------------------------------------
@@ -191,38 +191,38 @@ PAGINATION_PATTERNS: list[PromptPattern] = [
 # Credential resolution helpers
 # ---------------------------------------------------------------------------
 
-_VEHU_SSH_USER = "vehutied"
-_VEHU_SSH_PASSWORD = "tied"
-_VEHU_ACCESS_CODE = "PRO1234"
-_VEHU_VERIFY_CODE = "PRO1234!!"
+_DEFAULT_SSH_USER = "vehutied"
+_DEFAULT_SSH_PASSWORD = "tied"
+_DEFAULT_ACCESS_CODE = "PRO1234"
+_DEFAULT_VERIFY_CODE = "PRO1234!!"
 
 
 def _resolve_ssh_credentials(
     ssh_user: str | None,
     ssh_password: str | None,
 ) -> tuple[str, str, CredentialSource]:
-    """Resolve SSH credentials: explicit → env vars → VEHU defaults."""
+    """Resolve SSH credentials: explicit → env vars → built-in defaults."""
     if ssh_user is not None and ssh_password is not None:
         return ssh_user, ssh_password, CredentialSource.EXPLICIT
     env_user = os.environ.get("VISTA_SSH_USER")
     env_pass = os.environ.get("VISTA_SSH_PASSWORD")
     if env_user is not None and env_pass is not None:
         return env_user, env_pass, CredentialSource.ENVIRONMENT
-    return _VEHU_SSH_USER, _VEHU_SSH_PASSWORD, CredentialSource.DEFAULT
+    return _DEFAULT_SSH_USER, _DEFAULT_SSH_PASSWORD, CredentialSource.DEFAULT
 
 
 def _resolve_vista_credentials(
     access_code: str | None,
     verify_code: str | None,
 ) -> tuple[str, str, CredentialSource]:
-    """Resolve VistA credentials: explicit → env vars → VEHU defaults."""
+    """Resolve VistA credentials: explicit → env vars → built-in defaults."""
     if access_code is not None and verify_code is not None:
         return access_code, verify_code, CredentialSource.EXPLICIT
     env_ac = os.environ.get("VISTA_ACCESS_CODE")
     env_vc = os.environ.get("VISTA_VERIFY_CODE")
     if env_ac is not None and env_vc is not None:
         return env_ac, env_vc, CredentialSource.ENVIRONMENT
-    return _VEHU_ACCESS_CODE, _VEHU_VERIFY_CODE, CredentialSource.DEFAULT
+    return _DEFAULT_ACCESS_CODE, _DEFAULT_VERIFY_CODE, CredentialSource.DEFAULT
 
 
 # ---------------------------------------------------------------------------
@@ -308,7 +308,7 @@ class VistATerminal:
         SSH credential resolution order:
         1. Explicit arguments (if both provided)
         2. Environment variables VISTA_SSH_USER / VISTA_SSH_PASSWORD
-        3. Built-in VEHU defaults (vehutied / tied)
+        3. Built-in demonstration defaults (vehutied / tied)
 
         Args:
             ssh_user: SSH username (optional).
@@ -318,7 +318,7 @@ class VistATerminal:
             The banner text displayed during connection.
 
         Raises:
-            ConnectionError: If SSH connection fails or times out.
+            TerminalConnectionError: If SSH connection fails or times out.
             AuthenticationError: If OS-level password is rejected.
             SessionError: If VistA environment fails to load.
             StateError: If already connected.
@@ -444,7 +444,7 @@ class VistATerminal:
             text: The text to send.
 
         Raises:
-            ConnectionError: If the SSH channel is broken.
+            TerminalConnectionError: If the SSH channel is broken.
             StateError: If not connected.
         """
         self._require_connected("send")
@@ -478,7 +478,7 @@ class VistATerminal:
 
         Raises:
             PromptTimeoutError: If no prompt matches within timeout.
-            ConnectionError: If the SSH channel breaks mid-command.
+            TerminalConnectionError: If the SSH channel breaks mid-command.
             StateError: If not connected.
         """
         self._require_connected("send_and_wait")
@@ -559,7 +559,7 @@ class VistATerminal:
 
         Raises:
             PromptTimeoutError: If pattern doesn't match within timeout.
-            ConnectionError: If the SSH channel is broken.
+            TerminalConnectionError: If the SSH channel is broken.
             StateError: If not connected.
         """
         self._require_connected("wait_for")
@@ -586,7 +586,7 @@ class VistATerminal:
         VistA credential resolution order:
         1. Explicit arguments (if both provided)
         2. Environment variables VISTA_ACCESS_CODE / VISTA_VERIFY_CODE
-        3. Built-in VEHU defaults (PRO1234 / PRO1234!!)
+        3. Built-in demonstration defaults (PRO1234 / PRO1234!!)
 
         Args:
             access_code: VistA Access Code (optional).
