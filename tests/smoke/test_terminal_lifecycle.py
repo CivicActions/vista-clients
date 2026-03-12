@@ -63,16 +63,17 @@ class TestCommandExecution:
         """T029: send_and_wait() with custom prompt pattern."""
         with VistATerminal("localhost", 2222) as term:
             term.login()
-            # Use a custom pattern that matches the Select Option prompt
+            # Send empty to get menu, then use a custom pattern for the next prompt
+            term.send_and_wait("")
             output = term.send_and_wait("", prompt=r"Select .+ Option:")
             assert isinstance(output, str)
 
     def test_prompt_timeout_raises(self) -> None:
         """T030: Prompt timeout raises PromptTimeoutError with partial_output."""
-        with VistATerminal("localhost", 2222, prompt_timeout=2.0, settle_delay=0.1) as term:
+        with VistATerminal("localhost", 2222) as term:
             term.login()
             with pytest.raises(PromptTimeoutError) as exc_info:
-                term.send_and_wait("", prompt=r"NEVER_MATCH_THIS_PROMPT", timeout=1.0)
+                term.send_and_wait("", prompt=r"NEVER_MATCH_THIS_PROMPT", timeout=2.0)
             assert isinstance(exc_info.value.partial_output, str)
 
 
