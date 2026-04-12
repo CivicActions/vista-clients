@@ -29,6 +29,7 @@ class ParamType(enum.Enum):
     """RPC parameter types supported by the XWB protocol."""
 
     LITERAL = 0
+    REFERENCE = 1
     LIST = 2
 
 
@@ -118,6 +119,23 @@ def literal(value: str) -> RPCParameter:
         RPCParameter with type LITERAL.
     """
     return RPCParameter(param_type=ParamType.LITERAL, value=value)
+
+
+def reference(value: str) -> RPCParameter:
+    """Create a reference (indirect) parameter.
+
+    The server evaluates the M expression and passes the result
+    to the RPC entry point.  Used with RPCs like
+    ``XWB GET VARIABLE VALUE``.
+
+    Args:
+        value: An M variable name or expression (e.g. ``"DUZ"``,
+            ``"$P($G(^DPT(1,0)),U,1)"``).
+
+    Returns:
+        RPCParameter with type REFERENCE.
+    """
+    return RPCParameter(param_type=ParamType.REFERENCE, value=value)
 
 
 def list_param(entries: dict[str, str]) -> RPCParameter:
@@ -375,6 +393,8 @@ def build_rpc_message(name: str, params: list[RPCParameter] | None = None) -> by
         for p in params:
             if p.param_type == ParamType.LITERAL:
                 param_spec += "0" + lpack(p.value) + "f"
+            elif p.param_type == ParamType.REFERENCE:
+                param_spec += "1" + lpack(p.value) + "f"
             elif p.param_type == ParamType.LIST:
                 param_spec += "2"
                 first = True

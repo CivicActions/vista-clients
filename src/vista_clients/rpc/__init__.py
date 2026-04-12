@@ -21,6 +21,7 @@ from vista_clients.rpc.protocol import (
     SessionState,
     list_param,
     literal,
+    reference,
 )
 
 __all__ = [
@@ -39,4 +40,5 @@ __all__ = [
     "VistAError",
     "list_param",
     "literal",
+    "reference",
 ]
